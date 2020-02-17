@@ -1,0 +1,24 @@
+﻿<Window x:Class="ChartToJson.View.Windows.KeysHelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChartToJson.View.Windows"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d" WindowStyle="ToolWindow"
+        Title="Keys help" Height="450" Width="800">
+    <Grid>
+        <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10">
+            <system:String xml:space="preserve">Flow chart items:
+    - Del or Backspace key: Remove selected chart items, entities or connections.
+    - Mayus + Drag Left Button: Select area items
+    - Left button on empty background: Unselect items
+
+Zoom and pan:
+    - Mouse wheel: Zoom
+    - Drag Middle button: Move canvas
+    - Double left click: Center canvas on point
+            </system:String>
+        </TextBlock>
+    </Grid>
+</Window>

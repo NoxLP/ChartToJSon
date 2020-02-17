@@ -1,0 +1,64 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:StoryChartEntitiesTemplatesPlugin.Resources"
+                    x:Class="StoryChartEntitiesTemplatesPlugin.Resources.StoryChartPluginResourceDictionary"
+                    xmlns:VM="clr-namespace:StoryChart.ViewModel"
+                    xmlns:modelBase="clr-namespace:StoryChart.Model.Base"
+                    xmlns:UC="clr-namespace:StoryChart.View.UserControls"
+                    xmlns:triggers="clr-namespace:StoryChart.Model.Triggers"
+                    xmlns:triggersUC="clr-namespace:StoryChart.View.UserControls.Triggers"
+                    xmlns:rewards="clr-namespace:StoryChart.Model.Rewards"
+                    xmlns:UCRewards="clr-namespace:StoryChart.View.UserControls.Rewards">
+    <Style TargetType="{x:Type TextBox}">
+        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style x:Key="DescriptionTBStyle" TargetType="{x:Type TextBox}">
+        <!--VerticalScrollBarVisibility="Auto" Width="300" MaxWidth="400"
+                         TextWrapping="Wrap"-->
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="MinWidth" Value="300"/>
+        <Setter Property="MaxWidth" Value="500"/>
+        <Setter Property="MaxHeight" Value="200"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+    </Style>
+    <DataTemplate x:Key="CONTENT_StoryChartTemplate_StoryNodeUserControlTemplate">
+        <UC:NodeUserControl/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type modelBase:StoryGameObject}">
+        <UC:StoryGameObjectUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type triggers:ConversationTrigger}">
+        <triggersUC:ConversationTriggerUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type triggers:ItemGrabTrigger}">
+        <triggersUC:ItemGrabTriggerUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type triggers:ItemInteractionTrigger}">
+        <triggersUC:ItemInteractionTriggerUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type triggers:LocationTrigger}">
+        <triggersUC:LocationTriggerUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type triggers:MonsterDefeatTrigger}">
+        <triggersUC:MonsterDefeatTriggerUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rewards:CinematicCutSceneReward}">
+        <UCRewards:CinematicCutSceneRewardUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rewards:ConversationReward}">
+        <UCRewards:ConversationRewardUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rewards:ItemReward}">
+        <UCRewards:ItemRewardUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rewards:SkillReward}">
+        <UCRewards:SkillRewardUC/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type rewards:VariableReward}">
+        <UCRewards:VariableRewardUC/>
+    </DataTemplate>
+</ResourceDictionary>

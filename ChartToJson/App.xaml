@@ -1,0 +1,28 @@
+﻿<Application x:Class="ChartToJson.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ChartToJson"
+             xmlns:VM="clr-namespace:ChartToJson.ViewModel"
+             xmlns:chartCanvas="clr-namespace:ChartCanvasNamespace;assembly=ChartCanvas"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="CanvasBackground" Color="#FFE5E5E5"/>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="DescriptionTBStyle" TargetType="{x:Type TextBox}">
+            <!--VerticalScrollBarVisibility="Auto" Width="300" MaxWidth="400"
+                         TextWrapping="Wrap"-->
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="MinWidth" Value="300"/>
+            <Setter Property="MaxWidth" Value="500"/>
+            <Setter Property="MaxHeight" Value="200"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+            <Setter Property="VerticalContentAlignment" Value="Top"/>
+        </Style>
+        <VM:MainVM x:Key="MainVMInstance"/>
+    </Application.Resources>
+</Application>

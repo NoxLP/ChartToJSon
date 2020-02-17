@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ChartToJson.Properties" GeneratedClassName="UndoRedoNames">
+  <Profiles />
+  <Settings>
+    <Setting Name="Entities_Add" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Add new entity</Value>
+    </Setting>
+    <Setting Name="Entities_Remove" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Remove selected entities</Value>
+    </Setting>
+    <Setting Name="Entities_AddTextEntity" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Add new text entity</Value>
+    </Setting>
+    <Setting Name="Entities_AddText" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Add new textbox</Value>
+    </Setting>
+    <Setting Name="General_Cut" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Cut selected items</Value>
+    </Setting>
+    <Setting Name="General_Paste" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Paste selected items</Value>
+    </Setting>
+    <Setting Name="General_Duplicate" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Duplicate selected items</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

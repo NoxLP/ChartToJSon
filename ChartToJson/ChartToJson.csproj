@@ -1,0 +1,329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5CD1A602-F840-47DD-9123-F48C5F2BB5CC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ChartToJson</RootNamespace>
+    <AssemblyName>ChartToJson</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Extensions.cs" />
+    <Compile Include="MEF\PluginsHandlerVMClass.cs" />
+    <Compile Include="Model\ChartSaveProxy.cs" />
+    <Compile Include="Properties\Messages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Messages.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\UndoRedoNames.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>UndoRedoNames.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\GraphStyle.xaml.cs">
+      <DependentUpon>GraphStyle.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\CanvasVM.cs" />
+    <Compile Include="ViewModel\MainVM_CopyPaste.cs" />
+    <Compile Include="ViewModel\MainVM_Export.cs" />
+    <Compile Include="ViewModel\MainVM_File.cs" />
+    <Compile Include="ViewModel\MainVM.cs" />
+    <Compile Include="ViewModel\TextEntityVM.cs" />
+    <Compile Include="ViewModel\MainVM_TextsFont.cs" />
+    <Compile Include="ViewModel\TextVM.cs" />
+    <Compile Include="View\Converters\EnumConverter.cs" />
+    <Compile Include="View\Converters\MEFKVPToDataTemplateConverter.cs" />
+    <Compile Include="View\Converters\NotNullTrueConverter.cs" />
+    <Compile Include="View\Converters\ScaleToPercentConverter.cs" />
+    <Compile Include="View\Converters\StringToImageSourceConverter.cs" />
+    <Compile Include="View\MouseHandlingMode.cs" />
+    <Compile Include="View\Windows\ExportToImageConfigWindow.xaml.cs">
+      <DependentUpon>ExportToImageConfigWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\KeysHelpWindow.xaml.cs">
+      <DependentUpon>KeysHelpWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\OverviewWindow.xaml.cs">
+      <DependentUpon>OverviewWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\PluginsWindow.xaml.cs">
+      <DependentUpon>PluginsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\SelectEntityOnLoadedPluginsWindow.xaml.cs">
+      <DependentUpon>SelectEntityOnLoadedPluginsWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Resources\GraphStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\ExportToImageConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Windows\KeysHelpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Windows\OverviewWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\PluginsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Windows\SelectEntityOnLoadedPluginsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Messages.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\UndoRedoNames.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>UndoRedoNames.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\- Bibliotecas\JsonManagerLibrary\JsonManagerLibrary\JsonManagerLibrary.csproj">
+      <Project>{0d47d06e-c413-4324-b222-16ea761d332a}</Project>
+      <Name>JsonManagerLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\4.7.1.NETWpfUserControlsLibrary\4.7.1.NETWpfUserControlsLibrary\4.7.1.NETWpfUserControlsLibrary.csproj">
+      <Project>{c3080225-18a9-49dd-85e3-989c02dcfa79}</Project>
+      <Name>4.7.1.NETWpfUserControlsLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\InfiniteWorkspaceZoomAndPanSample\ZoomAndPan\ZoomAndPan.csproj">
+      <Project>{468adede-6f5e-40c0-99c9-c6dac4fac934}</Project>
+      <Name>ZoomAndPan</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NET471WPFVisualTreeHelperExtensions\NET471WPFVisualTreeHelperExtensions\NET471WPFVisualTreeHelperExtensions.csproj">
+      <Project>{14c00c1c-72cb-404c-b068-d68e7f669297}</Project>
+      <Name>NET471WPFVisualTreeHelperExtensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UndoRedoSystem\UndoRedoSystem\UndoRedoSystem.csproj">
+      <Project>{8608e473-f453-431a-95d0-8e3fab221bfa}</Project>
+      <Name>UndoRedoSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WPFHelpers\WPFHelpers\WPFHelpers.csproj">
+      <Project>{8c4dc6fa-d123-448c-a566-a8f91328ddc0}</Project>
+      <Name>WPFHelpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChartCanvasCustomControl\ChartCanvasCustomControl.csproj">
+      <Project>{395c4057-e43f-41f1-878c-512ec26cd80b}</Project>
+      <Name>ChartCanvasCustomControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChartEntitiesSharedTypesReference\ChartEntitiesSharedTypesReference.csproj">
+      <Project>{3409c964-d1d9-4207-a679-f4b891d7829d}</Project>
+      <Name>ChartEntitiesSharedTypesReference</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Add_thin_10x_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Undo_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ExpandChevronDown_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Redo_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\NewFile_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\FolderOpen_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Save_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\TestCoveredFailing_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ExportPerformance_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\SnapToGrid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\SnapToThumbsOn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ResultToJSON_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ViewPlugins.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\SnapToEntities.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ShowGrid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\GridConfig.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ConfigurationFile_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\AddLastType.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\GoToLastRow_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\AutosizeOptimize_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ZoomToFit_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\HideMember_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Thumbs_HideAll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Thumbs_ShowAll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ChangeShape.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\RotateRight_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ResizeSelectedEntities.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\AddTextEntity.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\AddSingleText.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\FontChooser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\SaveAs_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\ChangeEntitiesColor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Cut_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\CopyToClipboard_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Paste_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Duplicate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\UMLModelFile_16x.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

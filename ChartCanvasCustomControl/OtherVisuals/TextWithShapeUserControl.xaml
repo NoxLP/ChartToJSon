@@ -1,0 +1,80 @@
+﻿<base:ChartEntityResizeMoveRotate x:Class="ChartCanvasNamespace.OtherVisuals.TextWithShapeUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ChartCanvasNamespace.OtherVisuals"
+                                        xmlns:entities="clr-namespace:ChartCanvasNamespace.Entities"
+             xmlns:chartRoot="clr-namespace:ChartCanvasNamespace"
+                                          xmlns:base="clr-namespace:ChartCanvasNamespace.VisualsBase"
+                                          xmlns:thumbs="clr-namespace:ChartCanvasNamespace.Thumbs"
+                                          xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                                          xmlns:props="clr-namespace:ChartCanvasNamespace.Properties"
+             mc:Ignorable="d" x:Name="Root" Loaded="Root_Loaded" SizeChanged="Root_SizeChanged" KeyDown="KeyDown" KeyUp="KeyUp" SnapsToDevicePixels="True"
+             Canvas.Left="{Binding CanvasX,Mode=TwoWay}" Canvas.Top="{Binding CanvasY,Mode=TwoWay}" IsSelected="{Binding IsSelected,Mode=TwoWay}" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--<converters:GetTagFromShapeConverter x:Key="GetTagFromShapeTemplateConverter"/>-->
+            <ObjectDataProvider x:Key="ConnectingThumbsTypes"
+                MethodName="GetValues" 
+                ObjectType="{x:Type sys:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="thumbs:EntityConnectingThumbTypesEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/ChartCanvas;component/Resources/ResDict0.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Name="RootGrid" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+          KeyDown="KeyDown" KeyUp="KeyUp"
+          MouseDown="RootGrid_MouseDown" MouseUp="RootGrid_MouseUp" MouseEnter="RootGrid_MouseEnter" MouseLeave="RootGrid_MouseLeave">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="15"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="15"/>
+        </Grid.ColumnDefinitions>
+        <entities:EntityRotatingThumb x:Name="RotatingThumb" Grid.Row="0" Grid.Column="1" SnapsToDevicePixels="True" Width="12" Height="12"
+                                       Visibility="Hidden" KeyDown="KeyDown" KeyUp="KeyUp" 
+                                       DragStarted="RotatingThumb_DragStarted" DragCompleted="RotatingThumb_DragCompleted" DragDelta="RotatingThumb_DragDelta" 
+                                   MouseDoubleClick="RotatingThumb_MouseDoubleClick" PreviewMouseDoubleClick="RotatingThumb_MouseDoubleClick"/>
+        <!--PreviewMouseLeftButtonDown="RotatingThumb_PreviewMouseDown" PreviewMouseLeftButtonUp="RotatingThumb_PreviewMouseUp" PreviewMouseMove="RotatingThumb_PreviewMouseMove"/>-->
+        <entities:EntityConnectingThumb x:Name="ThTop" Grid.Row="0" Grid.Column="1" Width="10" Height="10" IsHitTestVisible="True"
+                              MyBorder="{Binding ElementName=Root}" MyEntityViewModel="{Binding ElementName=Root,Path=DataContext,Mode=TwoWay}" Type="Top"/>
+        <entities:EntityConnectingThumb x:Name="ThLeft" Grid.Row="1" Grid.Column="0" Height="10"
+                              MyBorder="{Binding ElementName=Root}" MyEntityViewModel="{Binding ElementName=Root,Path=DataContext,Mode=TwoWay}" Type="Left"/>
+        <entities:EntityConnectingThumb x:Name="ThRight" Grid.Row="1" Grid.Column="2" Height="10"
+                              MyBorder="{Binding ElementName=Root}" MyEntityViewModel="{Binding ElementName=Root,Path=DataContext,Mode=TwoWay}" Type="Right"/>
+        <entities:EntityConnectingThumb x:Name="ThBottom" Grid.Row="2" Grid.Column="1" Width="10"
+                              MyBorder="{Binding ElementName=Root}" MyEntityViewModel="{Binding ElementName=Root,Path=DataContext,Mode=TwoWay}" Type="Bottom"/>
+        <entities:EntityMovingThumb x:Name="MovingThumb" Grid.Row="2" Grid.Column="2" SnapsToDevicePixels="True" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                 Visibility="Visible" Width="12" Height="12"
+                                 PreviewMouseDown="MovingThumb_PreviewMouseDown" PreviewMouseUp="MovingThumb_PreviewMouseUp" PreviewMouseMove="MovingThumb_PreviewMouseMove"
+                                 KeyDown="KeyDown" KeyUp="KeyUp"/>
+        <entities:EntityResizingThumb x:Name="ResizingThumb" Grid.Row="2" Grid.Column="2" SnapsToDevicePixels="True"
+                                   VerticalAlignment="Top" Height="10" Width="10" HorizontalAlignment="Left" Visibility="Hidden"
+                                   PreviewMouseDown="ResizingThumb_PreviewMouseDown" PreviewMouseUp="ResizingThumb_PreviewMouseUp" PreviewMouseMove="ResizingThumb_PreviewMouseMove"
+                                   KeyDown="KeyDown" KeyUp="KeyUp"/>
+        <Grid Name="ContentGrid" Grid.Row="1" Grid.Column="1" UseLayoutRounding="True" IsHitTestVisible="True" Background="Transparent">
+            <ContentPresenter x:Name="BorderShape" IsHitTestVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Panel.ZIndex="{Binding Source={x:Static props:Settings.Default},Path=ZIndex_EntityShape}"
+                              Content="{Binding ElementName=Root,Path=MyShape, Mode=OneWay}"/>
+            <TextBox x:Name="BorderContent" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
+                     Width="100" Height="50" BorderBrush="Transparent" BorderThickness="0" 
+                     SizeChanged="BorderContent_SizeChanged" GotFocus="BorderContent_GotFocus" LostFocus="BorderContent_LostFocus"
+                     Panel.ZIndex="{Binding Source={x:Static props:Settings.Default},Path=ZIndex_EntityContentUserControl}"
+                     Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="{Binding ChoosedVerticalAlignment}"
+                     FontFamily="{Binding ChoosedFontFamily}" FontSize="{Binding ChoosedFontSize}"
+                     FontWeight="{Binding ChoosedFontWeight}" FontStretch="{Binding ChoosedFontStretch}"
+                     FontStyle="{Binding ChoosedFontStyle}" TextAlignment="{Binding ChoosedHorizontalAlignment}"
+                     TextDecorations="{Binding ChoosedTextDecoration}" Foreground="{Binding ChoosedFontBrush, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+    </Grid>
+</base:ChartEntityResizeMoveRotate>

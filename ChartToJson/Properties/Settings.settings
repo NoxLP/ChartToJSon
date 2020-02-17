@@ -1,0 +1,57 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ChartToJson.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Plugins_ImportAllPluginsOnStartup" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Texts_NoEntitySelected" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Must select an entity or press "Cancel" button.</Value>
+    </Setting>
+    <Setting Name="LastFileLoadedPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="NewFileConfirmationMessage" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">You are about to create an empty new file. Do you want to save your current file?</Value>
+    </Setting>
+    <Setting Name="OpenFileErrorMessage_ResourceDictionaryPluginNotFound" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">The file contains one or more "ResourceDictionary" plugins that are not currently loaded:</Value>
+    </Setting>
+    <Setting Name="OpenFileErrorMessage_General" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">There were an error trying to load the file with path "$".</Value>
+    </Setting>
+    <Setting Name="OpenFileErrorMessage_VMPluginNotFound" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">The file contains one or more "IChartEntityViewModel" plugins that are not currently loaded:</Value>
+    </Setting>
+    <Setting Name="LastImageExportedPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LastJsonExportedPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ExportToJSONDialogTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Export to JSON file</Value>
+    </Setting>
+    <Setting Name="ExportToImageDialogTitle" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Export to image file</Value>
+    </Setting>
+    <Setting Name="MainWindowTitlePrefix" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Flow chart to Json</Value>
+    </Setting>
+    <Setting Name="DefaultCanvasWidth" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">1900</Value>
+    </Setting>
+    <Setting Name="DefaultCanvasHeight" Type="System.Double" Scope="Application">
+      <Value Profile="(Default)">800</Value>
+    </Setting>
+    <Setting Name="OpenFileConfirmationMessage" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">You are about to open a saved file. Do you want to save your current file?</Value>
+    </Setting>
+    <Setting Name="MEFPluginTemplatesKeysString_Content" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">CONTENT</Value>
+    </Setting>
+    <Setting Name="MEFPluginTemplatesKeysString_Shape" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SHAPE</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

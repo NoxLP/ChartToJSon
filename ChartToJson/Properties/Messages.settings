@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ChartToJson.Properties" GeneratedClassName="Messages">
+  <Profiles />
+  <Settings>
+    <Setting Name="AnimateProgressTo" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">AnimateProgressTo</Value>
+    </Setting>
+    <Setting Name="SetProgressTo" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">SetProgressTo</Value>
+    </Setting>
+    <Setting Name="GetCanvasRender" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">GetCanvasRender</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

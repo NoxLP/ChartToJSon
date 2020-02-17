@@ -1,0 +1,30 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ChartCanvasNamespace.Properties" GeneratedClassName="ToolTips">
+  <Profiles />
+  <Settings>
+    <Setting Name="ToolTips_EntityConnectingThumb" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Toggle to connect to other entities creating a connection, or to change one end of an existing connection. Maintain shift to show resizing and rotating thumbs</Value>
+    </Setting>
+    <Setting Name="ToolTips_EntityMovingThumb" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Drag and Drop to move Entity. Maintain shift to show resizing and rotating thumbs</Value>
+    </Setting>
+    <Setting Name="ToolTips_LineConnecter" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Toggle to connect to an Entity through an Entity Connecting Thumb</Value>
+    </Setting>
+    <Setting Name="ToolTips_LineConnection" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Connection between two entities</Value>
+    </Setting>
+    <Setting Name="ToolTips_LineDivider" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Press to divide this Connection line in two segments</Value>
+    </Setting>
+    <Setting Name="ToolTips_LineDragger" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Drag and Drop to move this end of the two segments of this line</Value>
+    </Setting>
+    <Setting Name="ToolTips_EntityResizingThumb" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Drag and Drop to move Entity. Release shift to show connecting and moving thumbs</Value>
+    </Setting>
+    <Setting Name="ToolTips_EntityRotatingThumb" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Drag and Drop to rotate Entity. Double click to reset angle. Release shift to show connecting and moving thumbs</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

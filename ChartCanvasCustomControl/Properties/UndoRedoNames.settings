@@ -1,0 +1,33 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ChartCanvasNamespace.Properties" GeneratedClassName="UndoRedoNames">
+  <Profiles />
+  <Settings>
+    <Setting Name="LineConnection_DivideSegment" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Split line connection</Value>
+    </Setting>
+    <Setting Name="LineConnection_RemoveSegment" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Remove line connection segment</Value>
+    </Setting>
+    <Setting Name="LineConnection_Remove" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Remove line connection</Value>
+    </Setting>
+    <Setting Name="EntityBorder_Move" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Move entity</Value>
+    </Setting>
+    <Setting Name="LineConnection_MoveLineDragger" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Move line connection entity</Value>
+    </Setting>
+    <Setting Name="LineConnection_CreateLine" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Connec entities with line connection</Value>
+    </Setting>
+    <Setting Name="LineConnection_ReconnectLine" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Reconnect line connection end</Value>
+    </Setting>
+    <Setting Name="EntityBorder_Resize" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Resize entity</Value>
+    </Setting>
+    <Setting Name="EntityBorder_Rotation" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Rotate entity</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

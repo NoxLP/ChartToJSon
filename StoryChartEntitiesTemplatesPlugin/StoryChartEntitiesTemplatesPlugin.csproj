@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F25C811E-78A0-4E90-898E-AC5DAA0FE101}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>StoryChartEntitiesTemplatesPlugin</RootNamespace>
+    <AssemblyName>StoryChartEntitiesTemplatesPlugin</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources\StoryChartPluginResourceDictionary.cs" />
+    <Compile Include="ViewModel\NewNodeWindowVM.cs" />
+    <Compile Include="ViewModel\NewRewardWindowVM.cs" />
+    <Compile Include="ViewModel\NewTriggerWindowVM.cs" />
+    <Compile Include="ViewModel\NodeViewModel.cs" />
+    <Compile Include="View\aInputRestrictedTextBox.cs" />
+    <Compile Include="View\Converters\EnumConverter.cs" />
+    <Compile Include="View\Converters\ScaleToPercentConverter.cs" />
+    <Compile Include="View\DoubleInputTextBox.cs" />
+    <Compile Include="View\NodeUserControl.xaml.cs">
+      <DependentUpon>NodeUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\NodeUserControlComplete.xaml.cs">
+      <DependentUpon>NodeUserControlComplete.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Rewards\CinematicCutSceneRewardUC.xaml.cs">
+      <DependentUpon>CinematicCutSceneRewardUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Rewards\ConversationRewardUC.xaml.cs">
+      <DependentUpon>ConversationRewardUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Rewards\ItemRewardUC.xaml.cs">
+      <DependentUpon>ItemRewardUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Rewards\NodeRewardsBaseUC.xaml.cs">
+      <DependentUpon>NodeRewardsBaseUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Rewards\SkillRewardUC.xaml.cs">
+      <DependentUpon>SkillRewardUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Rewards\VariableRewardUC.xaml.cs">
+      <DependentUpon>VariableRewardUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\StoryGameObjectUC.xaml.cs">
+      <DependentUpon>StoryGameObjectUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Triggers\ConversationTriggerUC.xaml.cs">
+      <DependentUpon>ConversationTriggerUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Triggers\ItemGrabTriggerUC.xaml.cs">
+      <DependentUpon>ItemGrabTriggerUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Triggers\ItemInteractionTriggerUC.xaml.cs">
+      <DependentUpon>ItemInteractionTriggerUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Triggers\LocationTriggerUC.xaml.cs">
+      <DependentUpon>LocationTriggerUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Triggers\MonsterDefeatTriggerUC.xaml.cs">
+      <DependentUpon>MonsterDefeatTriggerUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Triggers\NodeTriggersBaseUC.xaml.cs">
+      <DependentUpon>NodeTriggersBaseUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\NewNodeWindow.xaml.cs">
+      <DependentUpon>NewNodeWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\NewRewardWindow.xaml.cs">
+      <DependentUpon>NewRewardWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Windows\NewTriggerWindow.xaml.cs">
+      <DependentUpon>NewTriggerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Base\StoryGameObject.cs" />
+    <Compile Include="Model\Base\Vector3.cs" />
+    <Compile Include="Model\Node.cs" />
+    <Compile Include="Model\NodeIdsHandler.cs" />
+    <Compile Include="Model\Rewards\aNodeReward.cs" />
+    <Compile Include="Model\Rewards\CinematicCutSceneReward.cs" />
+    <Compile Include="Model\Rewards\ConversationReward.cs" />
+    <Compile Include="Model\Rewards\INodeReward.cs" />
+    <Compile Include="Model\Rewards\ItemReward.cs" />
+    <Compile Include="Model\Rewards\NodeRewardWithGameObject.cs" />
+    <Compile Include="Model\Rewards\RewardsTypesEnum.cs" />
+    <Compile Include="Model\Rewards\SkillReward.cs" />
+    <Compile Include="Model\Rewards\VariableReward.cs" />
+    <Compile Include="Model\Triggers\aNodeTrigger.cs" />
+    <Compile Include="Model\Triggers\ConversationTrigger.cs" />
+    <Compile Include="Model\Triggers\ItemGrabTrigger.cs" />
+    <Compile Include="Model\Triggers\ItemInteractionTrigger.cs" />
+    <Compile Include="Model\Triggers\LocationTrigger.cs" />
+    <Compile Include="Model\Triggers\MonsterDefeatTrigger.cs" />
+    <Compile Include="Model\Triggers\NodeTriggerWithGameObject.cs" />
+    <Compile Include="Model\Triggers\TriggerTypesEnum.cs" />
+    <Page Include="Resources\StoryChartPluginResourceDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\NodeUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\NodeUserControlComplete.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Rewards\CinematicCutSceneRewardUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Rewards\ConversationRewardUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Rewards\ItemRewardUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Rewards\NodeRewardsBaseUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Rewards\SkillRewardUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Rewards\VariableRewardUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\StoryGameObjectUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Triggers\ConversationTriggerUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Triggers\ItemGrabTriggerUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Triggers\ItemInteractionTriggerUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Triggers\LocationTriggerUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Triggers\MonsterDefeatTriggerUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Triggers\NodeTriggersBaseUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\NewNodeWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\NewRewardWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Windows\NewTriggerWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Add_thin_10x_16x.png" />
+    <Resource Include="Resources\Icons\Cancel_16xMD.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\WPFHelpers\WPFHelpers\WPFHelpers.csproj">
+      <Project>{8c4dc6fa-d123-448c-a566-a8f91328ddc0}</Project>
+      <Name>WPFHelpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChartEntitiesSharedTypesReference\ChartEntitiesSharedTypesReference.csproj">
+      <Project>{3409c964-d1d9-4207-a679-f4b891d7829d}</Project>
+      <Name>ChartEntitiesSharedTypesReference</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\NodeThumbnail.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

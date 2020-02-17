@@ -1,0 +1,93 @@
+﻿<Window x:Class="ChartToJson.View.Windows.OverviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:StoryChart"
+        xmlns:ZoomAndPan="clr-namespace:ZoomAndPan;assembly=ZoomAndPan"
+        xmlns:ZPModel="clr-namespace:ChartCanvasNamespace.ZoomAndPanModel;assembly=ChartCanvas"
+        xmlns:chartCanvas="clr-namespace:ChartCanvasNamespace;assembly=ChartCanvas"
+        xmlns:CCConverters="clr-namespace:ChartCanvasNamespace.Converters;assembly=ChartCanvas"
+        Title="Overview" Height="200" Width="200" WindowStyle="ToolWindow" ShowInTaskbar="False" ShowActivated="False" MouseDown="Window_MouseDown"
+        DataContext="{StaticResource MainVMInstance}">
+    <!--
+    Embed a zoom and pan control.
+    This is used so that we can scale the content to fit the overview window,
+    therefore we see an overview of all of the content at once.
+    -->
+    <ZoomAndPan:ZoomAndPanControl
+        x:Name="overview"
+        Background="LightGray"
+        SizeChanged="overview_SizeChanged"
+        >
+
+        <!-- 
+        This is the content that is displayed.
+        -->
+        <Grid
+            Width="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentWidth}"
+            Height="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentHeight}"
+            SizeChanged="overview_SizeChanged"
+            >
+            <!--
+        	This ItemsControl is the main part of the content that is displayed.
+            It contains instances of RectangleData, the DataTemplate for RectangleData is in
+            the UserControl.Resources section of this file.
+            -->
+            <ItemsControl x:Name="content" Background="White"
+                          DataContext="{StaticResource MainVMInstance}"
+                          ItemsSource="{Binding EntitiesVM, Mode=OneWay}"
+                          ItemTemplateSelector="{StaticResource ShapeTemplateSelector}">
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left" Value="{Binding CanvasX}" />
+                        <Setter Property="Canvas.Top" Value="{Binding CanvasY}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <!--<ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentPresenter Content="{Binding UserControl,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
+                        --><!--Canvas.Left="{Binding Source=UserControl,Path=(Canvas.Left),Mode=OneWay}"
+                                          Canvas.Top="{Binding Source=UserControl,Path=(Canvas.Top),Mode=OneWay}"/>--><!--
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>-->
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <!--
+            This Canvas and Border are used to draw the 'overview' zoom rect. 
+            This show the area of the content that is being viewed in the main window.
+            -->
+            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Thumb
+                    x:Name="overviewZoomRectThumb"
+                    Canvas.Left="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentOffsetX, Mode=TwoWay}"
+                    Canvas.Top="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentOffsetY, Mode=TwoWay}"
+                    Width="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentViewportWidth}"
+                    Height="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentViewportHeight}"
+                    DragDelta="overviewZoomRectThumb_DragDelta"
+                    Opacity="0.5"
+                    >
+                    <Thumb.Template>
+                        <ControlTemplate 
+                            TargetType="{x:Type Thumb}"
+                            >
+
+                            <Border 
+                                BorderBrush="Black"
+                                BorderThickness="1"
+                                Background="Yellow"
+                                CornerRadius="1"                                        
+                                />
+
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+            </Canvas>
+
+        </Grid>
+    </ZoomAndPan:ZoomAndPanControl>
+
+</Window>

@@ -1,0 +1,97 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ChartCanvasNamespace"
+                    xmlns:converters="clr-namespace:ChartCanvasNamespace.Converters"
+                    xmlns:shapes="clr-namespace:ChartCanvasNamespace.Entities.EntitiesShapesUserControls"
+                    xmlns:lines="clr-namespace:ChartCanvasNamespace.Lines">
+    <DataTemplate x:Key="DefaultEntityShapeDataTemplate">
+        <Rectangle Name="ShapeRectRounded" RadiusX="10" RadiusY="10"
+              HorizontalAlignment="Center" VerticalAlignment="Center" Width="100" Height="60" 
+              Stroke="Black" Stretch="Fill"/>
+    </DataTemplate>
+    <Style x:Key="EntityBorderMovingThumbStyle" TargetType="{x:Type Thumb}">
+        <Style.Setters>
+            <Setter Property="Cursor" Value="SizeAll"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid Name="TIGrid" Background="Transparent">
+                            <Image Name="ThumbImage" Source="pack://application:,,,/ChartCanvas;component/Resources/Icons/MoveGlyph_16x.png" Stretch="Fill"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
+    <Style x:Key="EntityBorderResizingThumbStyle" TargetType="{x:Type Thumb}">
+        <Style.Setters>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid Name="TIGrid" Background="Transparent">
+                            <Image Name="ThumbImage" Source="pack://application:,,,/ChartCanvas;component/Resources/Icons/CanvasResizeThumbIcon.png" Stretch="Fill"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
+    <Style x:Key="EntityBorderRotatingThumbStyle" TargetType="{x:Type Thumb}">
+        <Style.Setters>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid Name="TIGrid" Background="Transparent">
+                            <Image Name="ThumbImage" Source="pack://application:,,,/ChartCanvas;component/Resources/Icons/RotateArrow_16x.png" Stretch="Fill"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
+    <Image x:Shared="false" x:Key="UnpluggedThumbImage" Source="pack://application:,,,/ChartCanvas;component/Resources/Icons/ConnectUnplugged_16x.png" Width="15" Height="15" Stretch="Fill"/>
+    <Image x:Shared="false" x:Key="PluggedThumbImage" Source="pack://application:,,,/ChartCanvas;component/Resources/Icons/ConnectPlugged_16x.png" Width="15" Height="15" Stretch="Fill"/>
+    <Image x:Shared="False" x:Key="LineDividerImage" Source="pack://application:,,,/ChartCanvas;component/Resources/Icons/DivideLine.png" Stretch="Fill" Width="15" Height="15"/>
+    <Style TargetType="{x:Type lines:LineConnecter}">
+        <Setter Property="Background" Value="{Binding Source={x:Static local:ChartCustomControl.Instance},Path=Background}"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Setter Property="Padding" Value="-5"/>
+        <Setter Property="ToggleButton.Content" Value="{StaticResource UnpluggedThumbImage}"/>
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Content" Value="{StaticResource PluggedThumbImage}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type lines:LineDivider}">
+        <Setter Property="Background" Value="{Binding Source={x:Static local:ChartCustomControl.Instance},Path=Background}"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Content" Value="{StaticResource LineDividerImage}"/>
+    </Style>
+    <Style TargetType="{x:Type lines:LineDragger}">
+        <Setter Property="Cursor" Value="SizeAll"/>
+        <Setter Property="Background" Value="{Binding Source={x:Static local:ChartCustomControl.Instance},Path=Background}"/>
+        <Setter Property="Foreground" Value="Transparent"/>
+        <!--<Setter Property="BorderBrush" Value="Transparent"/>-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Border BorderThickness="1" Padding="1"
+                            Background="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Background}"
+                            BorderBrush="{Binding RelativeSource={RelativeSource TemplatedParent},Path=Foreground}">
+                        <Image Source="pack://application:,,,/ChartCanvas;component/Resources/Icons/MoveGlyph_16x.png" Stretch="Fill"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <SolidColorBrush x:Key="SelectionBorderSelectedBrush" Color="#FFB9DBFA"/>
+    <SolidColorBrush x:Key="SelectionBorderUnSelectedBrush" Color="Black"/>
+    <SolidColorBrush x:Key="LineDraggerSelectionBorderUnSelectedBrush" Color="Transparent"/>
+    <SolidColorBrush x:Key="SelectionBorderTextUnSelectedBrush" Color="Gray"/>
+    <SolidColorBrush x:Key="SelectionLineSelectedBrush" Color="#FF3CA2FF"/>
+</ResourceDictionary>

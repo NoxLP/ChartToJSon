@@ -1,0 +1,58 @@
+﻿<Window x:Class="ChartToJson.View.Windows.ExportToImageConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChartToJson.View.Windows"
+        xmlns:VM="clr-namespace:ChartToJson.ViewModel"
+        xmlns:converters="clr-namespace:ChartToJson.View.Converters"
+        xmlns:controlsLib="clr-namespace:NET471WpfUserControlsLibrary;assembly=4.7.1.NETWpfUserControlsLibrary"
+        mc:Ignorable="d" DataContext="{StaticResource MainVMInstance}" Loaded="Window_Loaded"
+        Title="Export to image" Height="250" Width="450" ResizeMode="CanResize">
+    <Window.Resources>
+        <converters:StringToImageSourceConverter x:Key="StringToImageConverter"/>
+    </Window.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Label Name="label" Grid.Row="0" Grid.Column="0" Content="Type" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="0" Grid.Column="1" Margin="3"
+                  SelectedItem="{Binding SelectedImageType}"
+                  ItemsSource="{Binding ImageTypes}"/>
+        <Label Grid.Row="1" Grid.Column="0" Content="DPI" VerticalAlignment="Center"/>
+        <controlsLib:IntegralInputTextBox Grid.Row="1" Grid.Column="1" Margin="3"
+                                          IntegralValue="{Binding DPI, Mode=TwoWay}"
+                                          KeyUp="IntegralInputTextBox_KeyUp"/>
+        <Label Grid.Row="2" Grid.Column="0" Content="JPG Quality" VerticalAlignment="Center" Visibility="{Binding JPGQualityVisibility}"/>
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Stretch" Visibility="{Binding JPGQualityVisibility}">
+            <TextBox Text="{Binding ElementName=QualitySlider, Path=Value, Mode=TwoWay}" Width="30" Margin="3" KeyUp="IntegralInputTextBox_KeyUp"/>
+            <Slider Name="QualitySlider" VerticalAlignment="Center" Margin="3" Minimum="1" Maximum="100" Width="110"
+                    Value="{Binding JPGQuality}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,10" Height="30">
+            <Button Content="Ok" Width="50" Margin="10,0" HorizontalAlignment="Center" Click="Button_Click"/>
+            <Button Content="Cancel" IsCancel="True" Width="50" Margin="10,0" HorizontalAlignment="Center"/>
+            <Button Content="Preview" Width="50" Margin="10,0" HorizontalAlignment="Center" 
+                    Command="{Binding PreviewImageCommand}" IsEnabled="{Binding CanUpdatePreviewImage}"/>
+        </StackPanel>
+        <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="4" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="2" Height="Auto" BorderThickness="1" BorderBrush="Gray"
+                Margin="8,0,0,0"/>
+        <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="4" BorderThickness="1" BorderBrush="Gray" MinWidth="200" MinHeight="150" Width="Auto" Height="Auto"
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="20,5" ClipToBounds="True" Padding="2">
+            <Image Name="ImagePreview" Source="{Binding PreviewImageSource, Converter={StaticResource StringToImageConverter}}" Stretch="UniformToFill"
+                   MouseWheel="ImagePreview_MouseWheel" MouseDown="ImagePreview_MouseDown" MouseUp="ImagePreview_MouseUp" MouseMove="ImagePreview_MouseMove"
+                   ToolTip="Pan with click and move. Zoom with mouse wheel."/>
+        </Border>
+        <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Text="{Binding BottomBarText}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0"/>
+    </Grid>
+</Window>

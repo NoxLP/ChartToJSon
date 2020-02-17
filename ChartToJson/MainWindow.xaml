@@ -1,0 +1,505 @@
+﻿<Window x:Class="ChartToJson.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:ChartToJson"
+        xmlns:chartCanvas="clr-namespace:ChartCanvasNamespace;assembly=ChartCanvas"
+        xmlns:undoRedo="clr-namespace:UndoRedoSystem;assembly=UndoRedoSystem"
+        xmlns:undoRedoView="clr-namespace:UndoRedoSystem.View;assembly=UndoRedoSystem"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:converters="clr-namespace:ChartToJson.View.Converters"
+        xmlns:chartConverters="clr-namespace:ChartCanvasNamespace.Converters;assembly=ChartCanvas"
+        xmlns:controlsLib="clr-namespace:NET471WpfUserControlsLibrary;assembly=4.7.1.NETWpfUserControlsLibrary"
+        mc:Ignorable="d" Name="Window" Loaded="Window_Loaded" DataContext="{StaticResource MainVMInstance}" WindowState="Maximized"
+        Title="{Binding MainWindowTitle}" Height="450" Width="800">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:MEFKVPToDataTemplateConverter x:Key="MEFKVPToDataTemplateConverter"/>
+        <converters:NotNullTrueConverter x:Key="NotNullTrueConverter"/>
+        <chartConverters:BrushColorConverter x:Key="BrushColorConverter"/>
+        <SolidColorBrush x:Key="ToolBarButtonHoverBorder" Color="#80DADADA"/>
+        <SolidColorBrush x:Key="ToolBarButtonHover" Color="#210080FF"/>
+        <SolidColorBrush x:Key="ToolBarButtonPressedBorder" Color="#90006CD9"/>
+        <SolidColorBrush x:Key="ToolBarButtonPressed" Color="#400080FF"/>
+        <SolidColorBrush x:Key="ToolBarButtonChecked" Color="#400080FF"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ToggleButtonStyle1" TargetType="{x:Type ToggleButton}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="BorderBrush" Value="{StaticResource Button.Pressed.Border}"/>
+                                <Setter Property="Background" Value="{StaticResource Button.Pressed.Background}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" Value="{StaticResource Button.MouseOver.Border}"/>
+                                <Setter Property="Background" Value="{StaticResource Button.MouseOver.Background}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="BorderBrush" Value="{StaticResource Button.Pressed.Border}"/>
+                                <Setter Property="Background" Value="{StaticResource Button.Pressed.Background}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Name="RootGrid" Background="{Binding SelectedWorkspaceBackground, Mode=OneWay}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ToolBar Name="Toolbar" Grid.Row="0">
+            <ToolBar.Resources>
+                <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <Setter Property="Opacity" Value="1"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+                <Style x:Key="{x:Static ToolBar.ToggleButtonStyleKey}" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}">
+                    <Setter Property="Opacity" Value="1"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ToolBar.Resources>
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="New nodes file" Padding="0" IsEnabled="{Binding UnsavedChangesInCurrentFile}"
+                    Command="{Binding NewFileCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/NewFile_16x.png" Height="21" Margin="0,0,0,2"/>
+            </Button>
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Open nodes file" Padding="0"
+                    Command="{Binding OpenFileCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/FolderOpen_16x.png" Height="21"/>
+            </Button>
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Save current nodes file" IsEnabled="{Binding UnsavedChangesInCurrentFile}" Padding="0"
+                    Command="{Binding SaveFileCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/Save_16x.png" Height="20"/>
+            </Button>
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Save current nodes file" IsEnabled="{Binding CanSaveWithoutDialog}" Padding="0"
+                    Command="{Binding SaveAsFileCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/SaveAs_16x.png" Height="20"/>
+            </Button>
+            <Separator/>
+            <!--******************************************************-->
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Export to image file" Padding="0"
+                    Command="{Binding ExportToImageCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/ExportPerformance_16x.png" Height="21"/>
+            </Button>
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Export to JSON file" Padding="0"
+                    Command="{Binding ExportToJSONCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/ResultToJSON_16x.png" Height="21"/>
+            </Button>
+            <Separator/>
+            <!--******************************************************-->
+            <Button Name="CutButton" Margin="0,2,0,0" Height="28" Width="28" Background="Transparent" Padding="0" ToolTip="Cut selected items"
+                    Command="{Binding CutCommand}" IsEnabled="{Binding ElementName=MyChartControl,Path=SomeResizeRotateMoveItemIsSelected}">
+                <Image Source="pack://application:,,,/Resources/Icons/Cut_16x.png" Width="18" Height="30"/>
+            </Button>
+            <Button Name="CopyButton" Margin="0,2,0,0" Height="28" Width="28" Background="Transparent" Padding="0" ToolTip="Copy selected items"
+                    Command="{Binding CopyCommand}" IsEnabled="{Binding ElementName=MyChartControl,Path=SomeResizeRotateMoveItemIsSelected}">
+                <Image Source="pack://application:,,,/Resources/Icons/CopyToClipboard_16x.png" Width="18" Height="30"/>
+            </Button>
+            <ToggleButton Name="PasteButton" Margin="0,2,0,0" Height="28" Width="28" Padding="0" ToolTip="Paste. Click on canvas to paste on location."
+                    IsChecked="{Binding PasteIsChecked}" IsEnabled="{Binding ClipboardContainsData,Mode=TwoWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/Paste_16x.png" Width="18" Height="30"/>
+            </ToggleButton>
+            <Button Name="DuplicateButton" Margin="0,2,0,0" Height="28" Width="28" Background="Transparent" Padding="0" ToolTip="Duplicate selected items. Click on canvas to paste on location."
+                    Command="{Binding DuplicateCommand}" IsEnabled="{Binding ElementName=MyChartControl,Path=SomeResizeRotateMoveItemIsSelected}">
+                <Image Source="pack://application:,,,/Resources/Icons/Duplicate.png" Width="18" Height="30"/>
+            </Button>
+            <!--Undo-->
+            <Button Name="UndoButton" Margin="0,2,0,0" Height="28" Width="28" Background="Transparent" Padding="0" ToolTip="Undo last action"
+                    Command="{Binding UndoRedoVM.UndoSingleCommand}" IsEnabled="{Binding ElementName=Window, Path=DataContext.UndoRedoVM.SomeUndoCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/Undo_16x.png" Width="18" Height="30"/>
+            </Button>
+            <ToggleButton Name="UndoToggle" ToolTip="Choose action to undo" Height="28" Width="10" Margin="0,2,0,0" BorderThickness="0"
+                          Checked="UndoToggle_Checked" Unchecked="UndoToggle_Unchecked" 
+                          IsEnabled="{Binding ElementName=Window, Path=DataContext.UndoRedoVM.SomeUndoCommand,Mode=OneWay}">
+                <Path VerticalAlignment="Center" Margin="0,0,0,0" Fill="Gray" Data="M 0 0 L 3 4 L 6 0 Z"/>
+            </ToggleButton>
+            <Popup Name="UndoPopup" PlacementTarget="{Binding ElementName=UndoButton}" StaysOpen="False" Closed="UndoPopup_Closed">
+                <undoRedoView:UndoRedoCommandsBox BoxType="Undo"
+                    SelectedUndoRedoCommand="{Binding ElementName=Window, Path=DataContext.UndoRedoVM.UndoCommandSelectedItem, Mode=OneWayToSource}"
+                    ItemsClickCommand="{Binding ElementName=Window, Path=DataContext.UndoRedoVM.UndoUntilCommand}"/>
+            </Popup>
+            <!--Redo-->
+            <Button Name="RedoButton" Height="28" Width="28" Margin="0,2,0,0" Background="Transparent" Padding="0" ToolTip="Redo last action"
+                    Command="{Binding UndoRedoVM.RedoSingleCommand}" IsEnabled="{Binding ElementName=Window, Path=DataContext.UndoRedoVM.SomeRedoCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/Redo_16x.png" Width="18" Height="30"/>
+            </Button>
+            <ToggleButton Name="RedoToggle" ToolTip="Choose action to redo" Height="28" Width="10" Margin="0,2,0,0" BorderThickness="0"
+                          Checked="RedoToggle_Checked" Unchecked="RedoToggle_Unchecked"
+                          IsEnabled="{Binding ElementName=Window, Path=DataContext.UndoRedoVM.SomeRedoCommand,Mode=OneWay}">
+                <Path VerticalAlignment="Center" Margin="0,0,0,0" Fill="Gray" Data="M 0 0 L 3 4 L 6 0 Z"/>
+            </ToggleButton>
+            <Popup Name="RedoPopup" PlacementTarget="{Binding ElementName=RedoButton}" StaysOpen="False" Closed="RedoPopup_Closed">
+                <undoRedoView:UndoRedoCommandsBox BoxType="Redo"
+                    SelectedUndoRedoCommand="{Binding ElementName=Window, Path=DataContext.UndoRedoVM.RedoCommandSelectedItem, Mode=OneWayToSource}"
+                    ItemsClickCommand="{Binding ElementName=Window, Path=DataContext.UndoRedoVM.RedoUntilCommand}"/>
+            </Popup>
+            <Separator/>
+            <!--******************************************************-->
+            <ToggleButton ToolTip="Add empty entity" Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                          IsChecked="{Binding AddingEmptyEntity,Mode=TwoWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/Add_thin_10x_16x.png" Width="27" Height="27"/>
+            </ToggleButton>
+            <ToggleButton ToolTip="Add text entity (text entities won't be serialized as JSon but will be saved in the ChartToJSon save file and exported to image)" 
+                          Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                          IsChecked="{Binding AddingTextEntity,Mode=TwoWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/AddTextEntity.png" Width="21" Height="21"/>
+            </ToggleButton>
+            <ToggleButton ToolTip="Add single text (text won't be serialized as JSon but will be saved in the ChartToJSon save file and exported to image)" 
+                          Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                          IsChecked="{Binding AddingSingleText,Mode=TwoWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/AddSingleText.png" Width="21" Height="21"/>
+            </ToggleButton>
+            <ToggleButton ToolTip="Add empty entity of last type" Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                          IsEnabled="{Binding SomeItemAdded}" IsChecked="{Binding AddingEmptyLastTypeEntity,Mode=TwoWay}">
+                <!--IsEnabled="{Binding PluginsHandlerVM.SelectedFactory, Converter={StaticResource NotNullTrueConverter}, Mode=OneWay}"-->
+                <Image Source="pack://application:,,,/Resources/Icons/AddLastType.png" Width="21" Height="27"/>
+            </ToggleButton>
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="View loaded plugins" Padding="0"
+                    Command="{Binding ViewLoadedPluginsCommand,Mode=OneWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/ViewPlugins.png" Height="21"/>
+            </Button>
+            <Separator/>
+            <!--******************************************************-->
+            <Button Name="EntitiesColorButton" Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Change selected entities color" Padding="0"
+                    Click="EntitiesColorButton_Click" IsEnabled="{Binding ElementName=MyChartControl, Path=SomeItemWithShapeIsSelected}"
+                    Visibility="{Binding ElementName=MyChartControl,Path=SomeItemIsSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Source="pack://application:,,,/Resources/Icons/ChangeEntitiesColor.png" Width="21" Height="21"/>
+            </Button>
+            <Popup Name="ChangeColorPopup" PlacementTarget="{Binding ElementName=EntitiesColorButton}" StaysOpen="False">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="2" Background="White">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="27"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110"/>   
+                            <ColumnDefinition Width="110"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Content="Background:" VerticalAlignment="Bottom"/>
+                        <controlsLib:ColorPickerPalette Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="5,4"
+                                                        SelectedBrush="{Binding EntitiesBackgroundBrush,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                                        DefaultSelectedBrush="White"/>
+                        <Label Grid.Row="0" Grid.Column="1" Content="Shape stroke:" VerticalAlignment="Bottom"/>
+                        <controlsLib:ColorPickerPalette Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" Margin="5,4"
+                                                        SelectedBrush="{Binding EntitiesShapeBrush,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                                        DefaultSelectedBrush="Black"/>
+                    </Grid>
+                </Border>
+            </Popup>
+            <Button Name="ChangeShapeButton" Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Change selected entities Shape" Padding="0"
+                    Click="ChangeShapeButton_Click" IsEnabled="{Binding ElementName=MyChartControl, Path=SomeItemWithShapeIsSelected}"
+                    Visibility="{Binding ElementName=MyChartControl,Path=SomeItemIsSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Source="pack://application:,,,/Resources/Icons/ChangeShape.png" Width="21" Height="21"/>
+            </Button>
+            <Popup Name="ChangeShapePopup" PlacementTarget="{Binding ElementName=ChangeShapeButton}" StaysOpen="False">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="2" Background="White">
+                    <ListBox Width="220" MinHeight="30"
+                        SelectedItem="{Binding PluginsHandlerVM.SelectedShapeTemplate}"
+                        ItemsSource="{Binding PluginsHandlerVM.ShapesPluginsCollView}">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Width="210"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Viewbox Width="30" Height="30" SnapsToDevicePixels="True" UseLayoutRounding="True" ToolTip="{Binding Key}">
+                                    <ContentPresenter Content="{Binding Value}" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                </Viewbox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </Popup>
+            <Button Name="RotateButton" Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Rotate selected entities" Padding="0"
+                    Click="RotateButton_Click" IsEnabled="{Binding ElementName=MyChartControl, Path=SomeResizeRotateMoveItemIsSelected}"
+                    Visibility="{Binding ElementName=MyChartControl,Path=SomeItemIsSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Source="pack://application:,,,/Resources/Icons/RotateRight_16x.png" Width="25" Height="25"/>
+            </Button>
+            <Popup Name="RotatePopup" PlacementTarget="{Binding ElementName=RotateButton}" StaysOpen="False">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="2" Background="White">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="35"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="3">
+                            <Button Content="- 90º" Margin="3" Width="55" Command="{Binding RotateEntity_90_Command}">
+                                <Button.CommandParameter>
+                                    <s:Double>-90</s:Double>
+                                </Button.CommandParameter>
+                            </Button>
+                            <Button Content="+ 90º" Margin="3" Width="55" Command="{Binding RotateEntity90_Command}">
+                                <Button.CommandParameter>
+                                    <s:Double>90</s:Double>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                        <DockPanel Grid.Row="1" Margin="3">
+                            <Label Content="Degrees" VerticalAlignment="Center"/>
+                            <controlsLib:DoubleInputTextBox Margin="3" HorizontalAlignment="Stretch" Width="auto"
+                                                            DoubleValue="{Binding UserSelectedEntitiesAngle,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                                            ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+            </Popup>
+            <Button Name="ResizeButton" Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Resize selected entities" Padding="0"
+                    Click="ResizeButton_Click" IsEnabled="{Binding ElementName=MyChartControl, Path=SomeResizeRotateMoveItemIsSelected}"
+                    Visibility="{Binding ElementName=MyChartControl,Path=SomeItemIsSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Source="pack://application:,,,/Resources/Icons/ResizeSelectedEntities.png" Width="21" Height="21"/>
+            </Button>
+            <Popup Name="ResizePopup" PlacementTarget="{Binding ElementName=ResizeButton}" StaysOpen="False">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="2" Background="White">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="45"/>
+                            <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Content="Width"/>
+                        <controlsLib:DoubleInputTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,2"
+                                                        DoubleValue="{Binding UserSelectedEntitiesWidth, Mode=OneWay}"
+                                                        ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                        <Label Grid.Row="1" Grid.Column="0" Content="Height"/>
+                        <controlsLib:DoubleInputTextBox Grid.Row="1" Grid.Column="1" Margin="0,2"
+                                                        DoubleValue="{Binding UserSelectedEntitiesHeight, Mode=OneWay}"
+                                                        ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                        <CheckBox Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0"
+                                  IsChecked="{Binding MaintainEntitiesSizeProportion}">
+                            Proportional
+                        </CheckBox>
+                    </Grid>
+                </Border>
+            </Popup>
+            <Button Name="FontChooserButton" Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Font details of selected text object" Padding="0"
+                    Click="FontChooserButton_Click" IsEnabled="{Binding ElementName=MyChartControl, Path=SomeVisualTextIsSelected}"
+                    Visibility="{Binding ElementName=MyChartControl,Path=SomeItemIsSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Source="pack://application:,,,/Resources/Icons/FontChooser.png" Width="21" Height="21"/>
+            </Button>
+            <Popup Name="FontChooserPopup" PlacementTarget="{Binding ElementName=FontChooserButton}" StaysOpen="False">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="2" Background="White">
+                    <controlsLib:FontChooserUserControl
+                    ChoosedFontFamily="{Binding ChoosedFontFamily, Mode=TwoWay}"
+                    ChoosedFontSize="{Binding ChoosedFontSize, Mode=TwoWay}"
+                    ChoosedFontStyle="{Binding ChoosedFontStyle, Mode=TwoWay}"
+                    ChoosedFontStretch="{Binding ChoosedFontStretch, Mode=TwoWay}"
+                    ChoosedFontWeight="{Binding ChoosedFontWeight, Mode=TwoWay}"
+                    ChoosedFontBrush="{Binding ChoosedFontBrush, Mode=TwoWay}"
+                    ChoosedTextDecoration="{Binding ChoosedTextDecoration, Mode=TwoWay}"
+                    ChoosedHorizontalAlignment="{Binding ChoosedHorizontalAlignment, Mode=TwoWay}"
+                    ChoosedVerticalAlignment="{Binding ChoosedVerticalAlignment, Mode=TwoWay}"/>
+                </Border>
+            </Popup>
+            <Button ToolTip="Remove selected entities or connections" Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" Padding="0"
+                        Command="{Binding RemoveEntityCommand,Mode=OneWay}" IsEnabled="{Binding ElementName=MyChartControl, Path=SomeItemIsSelected}"
+                    Visibility="{Binding ElementName=MyChartControl,Path=SomeItemIsSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Source="pack://application:,,,/Resources/Icons/TestCoveredFailing_16x.png" Height="22" Margin="0,2,0,0"/>
+            </Button>
+            <Separator Visibility="{Binding ElementName=MyChartControl,Path=SomeItemIsSelected,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <!--******************************************************-->
+            <ToggleButton ToolTip="Show grid" Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                        IsChecked="{Binding ElementName=MyChartControl, Path=ShowGrid, Mode=TwoWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/ShowGrid.png" Height="22" Margin="0,2,0,0"/>
+            </ToggleButton>
+            <Button Name="GridConfigButton" Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Grid and canvas options" Padding="0"
+                    Click="GridConfigButton_Click">
+                <Image Source="pack://application:,,,/Resources/Icons/GridConfig.png" Height="21"/>
+            </Button>
+            <Popup Name="GridConfigPopup" PlacementTarget="{Binding ElementName=GridConfigButton}" StaysOpen="False">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="2" Background="White">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="102"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Content="Grid units length:"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Height="30">
+                            <Slider Name="GridThSlider" Minimum="10" Maximum="100" TickFrequency="10" IsSnapToTickEnabled="True" Width="200" VerticalAlignment="Center"
+                                Value="{Binding ElementName=MyChartControl, Path=GridLength}"/>
+                            <TextBox Text="{Binding ElementName=GridThSlider, Path=Value}" Width="40" Height="20" VerticalAlignment="Center" Margin="3"/>
+                        </StackPanel>
+                        <Label Grid.Row="1" Grid.Column="0" Content="Grid color:"/>
+                        <controlsLib:ColorPickerPalette Name="GridColorPicker" Grid.Row="1" Grid.Column="1" Margin="3"
+                                                        DefaultSelectedBrush="{Binding DefaultGridBrush}"
+                                                        SelectedBrush="{Binding SelectedGridBrush,Mode=TwoWay}"/>
+                        <Label Grid.Row="2" Grid.Column="0" Content="Canvas color:"/>
+                        <controlsLib:ColorPickerPalette Name="CanvasColorPicker" Grid.Row="2" Grid.Column="1" Margin="3" 
+                                                        DefaultSelectedBrush="{Binding DefaultCanvasBackground}"
+                                                        SelectedBrush="{Binding SelectedCanvasBackground,Mode=TwoWay}"/>
+                        <Label Grid.Row="3" Grid.Column="0" Content="Workspace color:"/>
+                        <controlsLib:ColorPickerPalette Name="WorkspaceColorPicker" Grid.Row="3" Grid.Column="1" Margin="3" 
+                                                        DefaultSelectedBrush="{Binding DefaultWorkspaceBackground}"
+                                                        SelectedBrush="{Binding SelectedWorkspaceBackground,Mode=TwoWay}"/>
+                    </Grid>
+                </Border>
+            </Popup>
+            <ToggleButton Name="ToggleSnapToGrid" ToolTip="Snap to grid" Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                        IsChecked="{Binding ElementName=MyChartControl, Path=SnapToGrid,Mode=TwoWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/SnapToGrid.png" Height="22" Margin="0,2,0,0"/>
+            </ToggleButton>
+            <ToggleButton Name="ToggleSnap" ToolTip="Snap to entities" Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                        IsChecked="{Binding ElementName=MyChartControl, Path=SnapToOtherEntities,Mode=TwoWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/SnapToEntities.png" Height="22" Margin="0,2,0,0"/>
+            </ToggleButton>
+            <ToggleButton Name="ToggleSnapAnchor" ToolTip="Snap to connection anchor points" Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                        IsChecked="{Binding ElementName=MyChartControl, Path=SnapToConnectionAnchorPoints,Mode=TwoWay}">
+                <Image Source="pack://application:,,,/Resources/Icons/SnapToThumbsOn.png" Height="22" Margin="0,2,0,0"/>
+            </ToggleButton>
+            <Separator/>
+            <!--******************************************************-->
+            <ToggleButton Name="ShowHideThumbs" ToolTip="All entities thumbs: alternate between show always or show only on mouse over entity" Height="28" Width="28" Margin="5,2,5,2" Padding="0"
+                        IsChecked="{Binding ElementName=MyChartControl, Path=ShowAllHiddableThumbs, Mode=TwoWay}">
+                <Image Height="22" Margin="0,2,0,0">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=ShowHideThumbs, Path=IsChecked}" Value="true">
+                                    <Setter Property="Source" Value="pack://application:,,,/Resources/Icons/Thumbs_ShowAll.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=ShowHideThumbs, Path=IsChecked}" Value="false">
+                                    <Setter Property="Source" Value="pack://application:,,,/Resources/Icons/Thumbs_HideAll.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </ToggleButton>
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Zoom canvas to fill screen" Padding="0"
+                    Command="{Binding ZoomFillScreenCommand}">
+                <Image Source="pack://application:,,,/Resources/Icons/ZoomToFit_16x.png" Height="21"/>
+            </Button>
+            <Button Name="ChangeSizeManuallyButton" Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Change canvas size manually" Padding="0"
+                    Click="ChangeSizeManuallyButton_Click">
+                <Image Source="pack://application:,,,/Resources/Icons/AutosizeOptimize_16x.png" Height="21"/>
+            </Button>
+            <Popup Name="ChangeCanvasSizePopup" PlacementTarget="{Binding ElementName=ChangeSizeManuallyButton}" StaysOpen="False">
+                <Border BorderBrush="Gray" BorderThickness="1" Padding="2" Background="White">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="45"/>
+                            <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Content="Width"/>
+                        <controlsLib:DoubleInputTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,2"
+                                 DoubleValue="{Binding CanvasWidth, Mode=TwoWay}"/>
+                        <Label Grid.Row="1" Grid.Column="0" Content="Height"/>
+                        <controlsLib:DoubleInputTextBox Grid.Row="1" Grid.Column="1" Margin="0,2"
+                                 DoubleValue="{Binding CanvasHeight, Mode=TwoWay}"/>
+                        <CheckBox Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0"
+                                  IsChecked="{Binding Maintain12Proportion}">
+                            1/2
+                        </CheckBox>
+                    </Grid>
+                </Border>
+            </Popup>
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Keys help" Padding="0"
+                    FontSize="25" FontWeight="Bold" Foreground="DimGray"
+                    Command="{Binding ViewHelpKeysWindowCommand, Mode=OneWay}">
+                <Button.Content>
+                    <TextBlock Text="?" VerticalAlignment="Center" Margin="0,0,0,5"/>
+                </Button.Content>
+            </Button>
+        </ToolBar>
+        <chartCanvas:ChartCustomControl x:Name="MyChartControl" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                        Width="auto" Height="auto" ClipToBounds="True" IsHitTestVisible="True"
+                                        DataContext="{StaticResource MainVMInstance}"
+                                        Background="{Binding SelectedCanvasBackground,Mode=TwoWay}"
+                                        GridBrush="{Binding SelectedGridBrush,Mode=TwoWay}"
+                                        CanvasWidth="{Binding CanvasWidth, Mode=TwoWay}"
+                                        CanvasHeight="{Binding CanvasHeight, Mode=TwoWay}"
+                                        EntitiesViewModels="{Binding EntitiesVM,Mode=TwoWay}" 
+                                        VisualsTextsViewModels="{Binding VisualTextsVM, Mode=TwoWay}"
+                                        VisualItemsSelected="{Binding VisualsSelected,Mode=TwoWay}"
+                                        ChartEntitiesSelected="{Binding EntitiesSelected,Mode=TwoWay}"
+                                        VisualTextsSelected="{Binding TextsSelected,Mode=TwoWay}"
+                                        Panel.ZIndex="10"/>
+        <Border Grid.Row="2" BorderThickness="1" BorderBrush="DimGray" Padding="2" Height="30" 
+                Background="{Binding ElementName=Toolbar, Path=Background}" Visibility="{Binding ProgressRowVisibility,Mode=OneWay}">
+            <Grid Margin="5,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.25*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding ProgressText,Mode=OneWay}"/>
+                <ProgressBar Grid.Column="1" Value="{Binding ProgressValue,Mode=OneWay}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+
+<!--<ZP:ZoomAndPanControl x:Name="zoomAndPanControl" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="Auto" Width="Auto" Background="#FFE5E5E5"
+                              Panel.ZIndex="0"
+                              ContentScale="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentScale, Mode=TwoWay}"
+                              ContentOffsetX="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentOffsetX, Mode=TwoWay}"
+                              ContentOffsetY="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentOffsetY, Mode=TwoWay}"
+                              ContentViewportWidth="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentViewportWidth, Mode=OneWayToSource}"
+                              ContentViewportHeight="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentViewportHeight, Mode=OneWayToSource}"
+                              MouseDown="zoomAndPanControl_MouseDown" MouseUp="zoomAndPanControl_MouseUp" MouseMove="zoomAndPanControl_MouseMove" 
+                              MouseWheel="zoomAndPanControl_MouseWheel" MouseDoubleClick="zoomAndPanControl_MouseDoubleClick">
+            <chartCanvas:ChartCustomControl Name="MyChartControl" Background="Transparent" MouseWheel="zoomAndPanControl_MouseWheel" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                          EntitiesViewModels="{Binding EntitiesVM,Mode=TwoWay}" Panel.ZIndex="10"
+                                          Width="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentWidth}" 
+                                          Height="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentHeight}"/>
+        </ZP:ZoomAndPanControl>-->
