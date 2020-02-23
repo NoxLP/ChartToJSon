@@ -13,6 +13,7 @@ namespace ChartCanvasNamespace
 {
     public interface IChartMainVM
     {
+        string VMCancellableActionsToken { get; }
         bool AddingEmptyEntity { get; }
         bool AddingEmptyLastTypeEntity { get; }
         bool AddingTextEntity { get; }

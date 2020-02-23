@@ -164,6 +164,7 @@ namespace ChartCanvasNamespace
 
         #region control stuff
         #region fields
+        private readonly string _CancellableActionsToken = "ChCuCo";
         private object _LockObject = new object();
         internal Canvas _SelectionBoxCanvas;
         internal Border _SelectionBox;
@@ -529,16 +530,24 @@ namespace ChartCanvasNamespace
                 case Key.Add:
                     Zoom(GetCanvasCenter(), 0.1);
                     break;
-                case Key.Back:
+                //case Key.Back:
                 //if (JumpBackToPrevZoom_CanExecuted())
                 //    JumpBackToPrevZoom();
                 //break;
                 case Key.Delete:
-                    //RemoveSelectedItems();
-                    ((IChartMainVM)DataContext).RemoveSelectedEntities();
+                    var vm = ((IChartMainVM)DataContext);
+                    vm.RemoveSelectedEntities();
                     break;
                 case Key.Escape:
-                    CancellableActionsHandlerClass.Instance.CancelAllOnGoingActions(x => x.Id.Contains("CCC"));
+                    vm = ((IChartMainVM)DataContext);
+                    if (!string.IsNullOrEmpty(vm.VMCancellableActionsToken))
+                    {
+                        CancellableActionsHandlerClass.Instance.CancelAllOnGoingActions(x =>
+                            x.CancellableId.Contains(_CancellableActionsToken) || x.CancellableId.Contains(vm.VMCancellableActionsToken));
+                    }
+                    else
+                        CancellableActionsHandlerClass.Instance.CancelAllOnGoingActions(x => x.CancellableId.Contains(_CancellableActionsToken));
+                    Keyboard.ClearFocus();
                     break;
             }
         }
@@ -549,6 +558,7 @@ namespace ChartCanvasNamespace
                 return;
             }
             HandleKeyDown(e.Key);
+            e.Handled = true;
         }
         protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
         {

@@ -79,7 +79,7 @@ namespace ChartCanvasNamespace.Selection
             {
                 var text = this as OtherVisuals.IVisualText;
                 if (text == null)
-                    Keyboard.ClearFocus();
+                    Keyboard.Focus(ChartCustomControl.Instance);
                 ChartCustomControl.Instance.ChartItemsSelectionHandler.ItemSelected(this);
                 _SelfSelecting = false;
             }

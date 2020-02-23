@@ -30,7 +30,6 @@ namespace ChartCanvasNamespace.Entities
         public EntityConnectingThumb()
         {
             InitializeComponent();
-            Id = $"ChCuCo_ConnectingThumb_{Guid.NewGuid().ToString()}";
             Panel.SetZIndex(this, Properties.Settings.Default.ZIndex_EntityConnectingThumb);
             ToolTip = Properties.ToolTips.Default.ToolTips_EntityConnectingThumb;
         }
@@ -277,7 +276,7 @@ namespace ChartCanvasNamespace.Entities
         #endregion
 
         #region cancel
-        public string Id { get; private set; }
+        public string CancellableId => $"ChCuCo_ConnectingThumb_{Guid.NewGuid().ToString()}";
         public Action CancelCurrentActionDelegate { get; private set; }
         public Func<Task> AsyncCancelCurrentActionDelegate => null;
 
@@ -286,9 +285,7 @@ namespace ChartCanvasNamespace.Entities
             ScriptUnchecked = true;
             this.IsChecked = false;
             CancelCurrentActionDelegate = null;
-            //ChartCustomControl.Instance.LineConnecterActionCancelledByStartThumb();
         }
-
         public bool Equals(IObjectWithCancellableAction other)
         {
             var obj = other as EntityConnectingThumb;
@@ -296,6 +293,7 @@ namespace ChartCanvasNamespace.Entities
                 return false;
             return this.Equals(obj as UserControl);
         }
+        #endregion
 
         public bool Equals(EntityConnectingThumb other)
         {
@@ -303,12 +301,12 @@ namespace ChartCanvasNamespace.Entities
                    base.Equals(other) &&
                    EqualityComparer<IViewModelOfVisualWithConnectingThumbs>.Default.Equals(MyEntityViewModel, other.MyEntityViewModel) &&
                    Type == other.Type &&
-                   Id == other.Id;
+                   CancellableId == other.CancellableId;
             return other != null &&
                    base.Equals(other) &&
                    EqualityComparer<IViewModelOfVisualWithConnectingThumbs>.Default.Equals(MyEntityViewModel, other.MyEntityViewModel) &&
                    Type == other.Type &&
-                   Id == other.Id;
+                   CancellableId == other.CancellableId;
         }
         public new int GetHashCode()
         {
@@ -316,57 +314,8 @@ namespace ChartCanvasNamespace.Entities
             hashCode = hashCode * -1521134295 + base.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<IViewModelOfVisualWithConnectingThumbs>.Default.GetHashCode(MyEntityViewModel);
             hashCode = hashCode * -1521134295 + Type.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Id);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CancellableId);
             return hashCode;
         }
-        #endregion
     }
 }
-
-#region old
-/*
- * private void CreateNewLine(EntityConnectingThumb lineStartThumb)
-        {
-            var line = new LineBetweenConnectingThumbs(lineStartThumb, this);
-            //line.Source = _LineStartThumb.AnchorPoint;
-            //line.Destination = this.AnchorPoint;
-            var b = new Binding()
-            {
-                Source = lineStartThumb.MyBorder, //_LineStartThumb;
-                Path = GetPropertyPathByThumbName(lineStartThumb.Name), //new PropertyPath(AnchorPointProperty);
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-            BindingOperations.SetBinding(line, LineBetweenConnectingThumbs.SourceProperty, b);
-            BindingOperations.GetBindingExpression(line, LineBetweenConnectingThumbs.SourceProperty).UpdateSource();
-            BindingOperations.GetBindingExpression(line, LineBetweenConnectingThumbs.SourceProperty).UpdateTarget();
-
-            b = new Binding()
-            {
-                Source = MyBorder, //this;
-                Path = GetPropertyPathByThumbName(Name), //new PropertyPath(AnchorPointProperty);
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-            BindingOperations.SetBinding(line, LineBetweenConnectingThumbs.DestinationProperty, b);
-            BindingOperations.GetBindingExpression(line, LineBetweenConnectingThumbs.DestinationProperty).UpdateSource();
-            BindingOperations.GetBindingExpression(line, LineBetweenConnectingThumbs.DestinationProperty).UpdateTarget();
-
-            line.Draw();
-            ChartCustomControl.Instance.ChartCanvas.Children.Add(line);
-            _LinesEnds.Add(line);
-            lineStartThumb._LinesStarts.Add(line);
-
-            ScriptUnchecked = true;
-            this.IsChecked = false;
-            lineStartThumb.IsChecked = false;
-            lineStartThumb = null;
-            CancelCurrentActionDelegate = null;
-            CancellableActionsHandlerClass.Instance.CancellableActionFinished(this);
-        }
-        private void CreateNewLine(LineConnecter startLineThumb)
-        {
-
-        }
- * */
-#endregion

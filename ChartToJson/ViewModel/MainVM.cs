@@ -60,10 +60,10 @@ namespace ChartToJson.ViewModel
         private Visibility _ProgressRowVisibility = Visibility.Collapsed;
         private string _ProgressText;
         private int _ProgressValue;
-        
         #endregion
 
         #region properties
+        public string VMCancellableActionsToken => "";
         public UndoRedoVM UndoRedoVM { get; private set; }
         public PluginsHandlerVMClass PluginsHandlerVM { get; private set; }
         public bool UnsavedChangesInCurrentFile
@@ -325,7 +325,7 @@ namespace ChartToJson.ViewModel
 
         public void RemoveSelectedEntities()
         {
-            //ChartCustomControl.Instance.RemoveSelectedItems();
+            Console.WriteLine("RemoveSelectedEntities");
             var toRemoveFromVisuals = new List<LineConnection>();
             var undoConns = new List<LineConnectionSaveProxy>();
             var toRemoveFromVMEntities = new List<IChartEntityViewModel>();
@@ -611,7 +611,7 @@ namespace ChartToJson.ViewModel
                     vm.VisualTextsVM.Add(item);
                 }
             }
-            if (parameters[3] != null)
+            if (parameters.Length > 3 && parameters[3] != null)
             {
                 ChartCustomControl.Instance.AddLineConnectionsByProxies(parameters[3] as List<LineConnectionSaveProxy>);
             }
@@ -635,7 +635,7 @@ namespace ChartToJson.ViewModel
                     vm.VisualTextsVM.Remove(item);
                 }
             }
-            if (parameters[3] != null)
+            if (parameters.Length > 3 && parameters[3] != null)
             {
                 var removedConns = parameters[3] as List<LineConnection>;
                 foreach (var item in removedConns)

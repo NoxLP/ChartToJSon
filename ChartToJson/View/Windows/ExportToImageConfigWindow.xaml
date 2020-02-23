@@ -7,6 +7,7 @@
         xmlns:VM="clr-namespace:ChartToJson.ViewModel"
         xmlns:converters="clr-namespace:ChartToJson.View.Converters"
         xmlns:controlsLib="clr-namespace:NET471WpfUserControlsLibrary;assembly=4.7.1.NETWpfUserControlsLibrary"
+        xmlns:controlsLibRTexts="clr-namespace:NET471WpfUserControlsLibrary.RestrictedTextBoxes;assembly=4.7.1.NETWpfUserControlsLibrary"
         mc:Ignorable="d" DataContext="{StaticResource MainVMInstance}" Loaded="Window_Loaded"
         Title="Export to image" Height="250" Width="450" ResizeMode="CanResize">
     <Window.Resources>
@@ -30,7 +31,7 @@
                   SelectedItem="{Binding SelectedImageType}"
                   ItemsSource="{Binding ImageTypes}"/>
         <Label Grid.Row="1" Grid.Column="0" Content="DPI" VerticalAlignment="Center"/>
-        <controlsLib:IntegralInputTextBox Grid.Row="1" Grid.Column="1" Margin="3"
+        <controlsLibRTexts:IntegralInputTextBox Grid.Row="1" Grid.Column="1" Margin="3"
                                           IntegralValue="{Binding DPI, Mode=TwoWay}"
                                           KeyUp="IntegralInputTextBox_KeyUp"/>
         <Label Grid.Row="2" Grid.Column="0" Content="JPG Quality" VerticalAlignment="Center" Visibility="{Binding JPGQualityVisibility}"/>

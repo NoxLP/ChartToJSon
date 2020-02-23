@@ -16,7 +16,7 @@ namespace ChartCanvasNamespace.VisualsBase
     {
         public virtual FrameworkElement ResizingControl { get; }
 
-        #region move/resize/rotate
+        #region resize
         protected static double _MinSize = 40;
         internal bool _IsResizing;
         internal Size _UndoSize;
@@ -72,9 +72,20 @@ namespace ChartCanvasNamespace.VisualsBase
         }
         protected override void SnapPoint_Moving(ref Point p, SnapToObjectsHandlerClass.SnapTo snap)
         {
-            if (snap != null)
+            if (snap != null && (snap.Snap || snap.OutOfCanvas))
             {
-                if (snap.X.HasValue)
+                if (snap.OutOfCanvasLeft.HasValue || snap.OutOfCanvasRight.HasValue)
+                {
+                    if (snap.OutOfCanvasLeft.HasValue)
+                    {
+                        p.X = snap.OutOfCanvasLeft.Value - BaseRootGrid.ColumnDefinitions[0].ActualWidth;
+                    }
+                    else if (snap.OutOfCanvasRight.HasValue)
+                    {
+                        p.X = snap.OutOfCanvasRight.Value - BaseRootGrid.ColumnDefinitions[0].ActualWidth - ContentMargin.Left - BaseRootGrid.ColumnDefinitions[1].ActualWidth - ContentMargin.Right;
+                    }
+                }
+                else if (snap.X.HasValue)
                 {
                     switch (snap.XType)
                     {
@@ -98,7 +109,23 @@ namespace ChartCanvasNamespace.VisualsBase
                     p.X += SelectionBorderThickness;
                 }
 
-                if (snap.Y.HasValue)
+                if (snap.OutOfCanvasTop.HasValue || snap.OutOfCanvasBottom.HasValue)
+                {
+                    if (snap.OutOfCanvasTop.HasValue)
+                    {
+                        Console.WriteLine($@"
+----------------------------------------------
+Out top: {snap.OutOfCanvasTop.Value} 
+old p.y: {p.Y}");
+                        p.Y = snap.OutOfCanvasTop.Value - BaseRootGrid.RowDefinitions[0].ActualHeight;
+                        Console.WriteLine($@"new p.y: {p.Y}");
+                    }
+                    else if (snap.OutOfCanvasBottom.HasValue)
+                    {
+                        p.Y = snap.OutOfCanvasBottom.Value - BaseRootGrid.RowDefinitions[0].ActualHeight - ContentMargin.Top - BaseRootGrid.RowDefinitions[1].ActualHeight - ContentMargin.Bottom;
+                    }
+                }
+                else if (snap.Y.HasValue)
                 {
                     switch (snap.YType)
                     {
@@ -134,7 +161,8 @@ namespace ChartCanvasNamespace.VisualsBase
         }
         public void OtherVisualStartResizing()
         {
-            _UndoSize = new Size(ActualWidth, ActualHeight);
+            _UndoSize = new Size(ResizingControl.Width, ResizingControl.Height);
+            _ItemCoordsWhenClickedRelativeToCanvas = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
             _IsResizing = true;
         }
         public void OtherVisualResize(double width, double height)
@@ -143,6 +171,15 @@ namespace ChartCanvasNamespace.VisualsBase
             ResizingControl.Height = height;
             UpdateAnchorPoint();
             CalculateSnapCoords();
+
+            var currentPosition = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+            var delta = ChartCustomControl.Instance.SnapToObjectsHandler.CheckOutOfCanvasAndReturnPositionDelta(GetTemporalCurrentSnapCoordinates(currentPosition));
+            if (delta.X != 0 || delta.Y != 0)
+            {
+                AutomaticMoveToWithoutUndoRedo(new Point(currentPosition.X + delta.X, currentPosition.Y + delta.Y));
+                UpdateAnchorPoint();
+                CalculateSnapCoords();
+            }
         }
         public void OtherVisualFastResize(double width, double height)
         {
@@ -156,6 +193,7 @@ namespace ChartCanvasNamespace.VisualsBase
             _IsResizing = true;
             _UndoSize = new Size(ResizingControl.Width, ResizingControl.Height);
             _ThumbPositionWhenClickedRelativeToCanvas = BaseResizingThumb.GetAnchorPoint();
+            _ItemCoordsWhenClickedRelativeToCanvas = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
             ((EntityResizingThumb)sender).CaptureMouse();
 
             var chart = ChartCustomControl.Instance;
@@ -201,14 +239,22 @@ namespace ChartCanvasNamespace.VisualsBase
             if (!_IsResizing)
                 return;
 
-            var currentMousePositionRelativeToCanvas = e.GetPosition(ChartCustomControl.Instance.ChartCanvas);
+            var chart = ChartCustomControl.Instance;
+            var currentMousePositionRelativeToCanvas = e.GetPosition(chart.ChartCanvas);
 
             var v = currentMousePositionRelativeToCanvas - _ThumbPositionWhenClickedRelativeToCanvas;
 
             Console.WriteLine($"{ActualWidth} ; {ActualHeight}");
             Console.WriteLine($"V: {v} ; T: {_ThumbPositionWhenClickedRelativeToCanvas} ; S: {ChartCustomControl.Instance.Scale}");
-            ResizingControl.Width = Math.Max(ResizingControl.Width + (v.X * ChartCustomControl.Instance.Scale), _MinSize);
-            ResizingControl.Height = Math.Max(ResizingControl.Height + (v.Y * ChartCustomControl.Instance.Scale), _MinSize);
+            var w = Math.Max(ResizingControl.Width + (v.X * chart.Scale), _MinSize);
+            var h = Math.Max(ResizingControl.Height + (v.Y * chart.Scale), _MinSize);
+
+            ResizingControl.Width = w;
+            ResizingControl.Height = h;
+            var currentPosition = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+            var delta = chart.SnapToObjectsHandler.CheckOutOfCanvasAndReturnPositionDelta(GetTemporalCurrentSnapCoordinates(currentPosition));
+            if (delta.X != 0 || delta.Y != 0)
+                AutomaticMoveToWithoutUndoRedo(new Point(currentPosition.X + delta.X, currentPosition.Y + delta.Y));
 
             UpdateAnchorPoint();
             CalculateSnapCoords();
@@ -218,8 +264,8 @@ namespace ChartCanvasNamespace.VisualsBase
                 foreach (var item in _SelectedBordersWhenResizing)
                 {
                     item.Visual.OtherVisualResize(
-                        Math.Max(item.Visual.ResizingControl.Width + (v.X * ChartCustomControl.Instance.Scale), _MinSize),
-                        Math.Max(item.Visual.ResizingControl.Height + (v.Y * ChartCustomControl.Instance.Scale), _MinSize));
+                        Math.Max(item.Visual.ResizingControl.Width + (v.X * chart.Scale), _MinSize),
+                        Math.Max(item.Visual.ResizingControl.Height + (v.Y * chart.Scale), _MinSize));
                 }
             }
 
@@ -229,8 +275,21 @@ namespace ChartCanvasNamespace.VisualsBase
         internal void ResizeTo(double width, double height)
         {
             _UndoSize = new Size(ResizingControl.Width, ResizingControl.Height);
+            _ItemCoordsWhenClickedRelativeToCanvas = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+
             var newSize = new Size(width, height);
+            AutomaticResizeToWithoutUndoRedo(newSize);
+
             var chart = ChartCustomControl.Instance;
+            var currentPosition = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+            var delta = chart.SnapToObjectsHandler.CheckOutOfCanvasAndReturnPositionDelta(GetTemporalCurrentSnapCoordinates(currentPosition));
+            if (delta.X != 0 || delta.Y != 0)
+            {
+                AutomaticMoveToWithoutUndoRedo(new Point(currentPosition.X + delta.X, currentPosition.Y + delta.Y));
+                UpdateAnchorPoint();
+                CalculateSnapCoords();
+            }
+
             if (chart.ChartEntitiesSelected.Count == 1)
             {
                 if (!chart.ChartEntitiesSelected[0].Equals(DataContext))
@@ -244,7 +303,7 @@ namespace ChartCanvasNamespace.VisualsBase
                     item.Visual.OtherVisualFastResize(width, height);
                 }
             }
-            AutomaticResizeToWithoutUndoRedo(newSize);
+
             CreateResizeUndoRedoCommands();
         }
         public void AutomaticResizeToWithoutUndoRedo(Size size)
@@ -257,39 +316,111 @@ namespace ChartCanvasNamespace.VisualsBase
         #endregion
 
         #region undo/redo
+        private object[] _Parameters;
+        private int _ParsIndex = -1;
+        private Action<object[]> _Undo = x => { };
+        private Action<object[]> _Redo = x => { };
+
+        private void SetThisUndoRedoMoved()
+        {
+            _Parameters[++_ParsIndex] = this;
+            int itemIndex1 = _ParsIndex;
+            _Parameters[++_ParsIndex] = _UndoSize;
+            _Parameters[++_ParsIndex] = new Size(ResizingControl.Width, ResizingControl.Height);
+
+            _Undo += x => Console.WriteLine($"*** UNDO resize to = {(Size)x[itemIndex1 + 1]}");
+            _Undo += x => ((EntityBorderUserControl)x[itemIndex1]).AutomaticResizeToWithoutUndoRedo((Size)x[itemIndex1 + 1]);
+            _Redo += x => Console.WriteLine($"*** REDO resize to = {(Size)x[itemIndex1 + 2]}");
+            _Redo += x => ((EntityBorderUserControl)x[itemIndex1]).AutomaticResizeToWithoutUndoRedo((Size)x[itemIndex1 + 2]);
+
+            _Parameters[++_ParsIndex] = _ItemCoordsWhenClickedRelativeToCanvas;
+            int closureProxy1 = _ParsIndex;
+            _Undo += x => ((EntityBorderUserControl)x[itemIndex1]).AutomaticMoveToWithoutUndoRedo((Point)x[closureProxy1]);
+            _Parameters[++_ParsIndex] = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+            int closureProxy2 = _ParsIndex;
+            _Redo += x => ((EntityBorderUserControl)x[itemIndex1]).AutomaticMoveToWithoutUndoRedo((Point)x[closureProxy2]);
+        }
+        private void SetThisUndoRedoNotMoved()
+        {
+            _Parameters[++_ParsIndex] = this;
+            int itemIndex3 = _ParsIndex;
+            _Parameters[++_ParsIndex] = _UndoSize;
+            _Parameters[++_ParsIndex] = new Size(ResizingControl.Width, ResizingControl.Height);
+
+            _Undo += x => Console.WriteLine($"*** UNDO resize to = {(Size)x[itemIndex3 + 1]}");
+            _Undo += x => ((EntityBorderUserControl)x[itemIndex3]).AutomaticResizeToWithoutUndoRedo((Size)x[itemIndex3 + 1]);
+            _Redo += x => Console.WriteLine($"*** REDO resize to = {(Size)x[itemIndex3 + 2]}");
+            _Redo += x => ((EntityBorderUserControl)x[itemIndex3]).AutomaticResizeToWithoutUndoRedo((Size)x[itemIndex3 + 2]);
+        }
         private void CreateResizeUndoRedoCommands()
         {
-            Action<object[]> undo = x => { };
-            object[] parameters;
-            Action<object[]> redo = x => { };
-            int parsIndex = -1;
+            _Undo = x => { };
+            _Redo = x => { };
+            var currentPosition = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+            bool moved = !currentPosition.Equals(_ItemCoordsWhenClickedRelativeToCanvas);
+
             if (_SelectedBordersWhenResizing != null)
             {
-                parameters = new object[(_SelectedBordersWhenResizing.Count * 3) + 3];
+                var itemsParams = new List<object>();
                 foreach (var item in _SelectedBordersWhenResizing)
                 {
                     item.Visual.DraggingFinished();
+                    var uiElem = item.Visual.GetUIElement;
 
-                    parameters[++parsIndex] = item.Visual.UndoSize;
-                    parameters[++parsIndex] = item;
-                    undo += x => ((SelectedBorderResizingData)x[parsIndex]).Visual.AutomaticResizeToWithoutUndoRedo((Size)x[parsIndex - 1]);
-                    parameters[++parsIndex] = new Size(item.Visual.GetUIElement.RenderSize.Width, item.Visual.GetUIElement.RenderSize.Height); //new Point(Canvas.GetLeft(item.Border), Canvas.GetTop(item.Border));
-                    redo += x => ((SelectedBorderResizingData)x[parsIndex - 1]).Visual.AutomaticResizeToWithoutUndoRedo((Size)x[parsIndex]);
+                    itemsParams.Add(item); //item index
+                    ++_ParsIndex;
+                    int itemIndex = _ParsIndex; // -> closure proxy
+                    itemsParams.Add(item.Visual.UndoSize);
+                    itemsParams.Add(new Size(item.Visual.ResizingControl.Width, item.Visual.ResizingControl.Height));
+                    _ParsIndex += 2;
+                    _Undo += x => ((SelectedBorderResizingData)x[itemIndex]).Visual.AutomaticResizeToWithoutUndoRedo((Size)x[itemIndex + 1]);
+                    _Redo += x => ((SelectedBorderResizingData)x[itemIndex]).Visual.AutomaticResizeToWithoutUndoRedo((Size)x[itemIndex + 2]);
+
+                    var itemCurrentPosition = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+                    if (!itemCurrentPosition.Equals(item.ItemCoordsWhenClickedRelativeToCanvas))
+                    {
+                        itemsParams.Add(item.ItemCoordsWhenClickedRelativeToCanvas);
+                        itemsParams.Add(new Point(Canvas.GetLeft(uiElem), Canvas.GetTop(uiElem)));
+                        _ParsIndex += 2;
+
+                        _Undo += x => ((SelectedBorderResizingData)x[itemIndex]).Visual.AutomaticMoveToWithoutUndoRedo((Point)x[itemIndex + 3]);
+                        _Redo += x => ((SelectedBorderResizingData)x[itemIndex]).Visual.AutomaticMoveToWithoutUndoRedo((Point)x[itemIndex + 4]);
+                    }
                 }
 
                 _SelectedBordersWhenMoving = null;
+                if (moved)
+                {
+                    _Parameters = new object[itemsParams.Count + 5];
+                    itemsParams.CopyTo(_Parameters);
+                    SetThisUndoRedoMoved();
+                }
+                else
+                {
+                    _Parameters = new object[itemsParams.Count + 3];
+                    itemsParams.CopyTo(_Parameters);
+                    SetThisUndoRedoNotMoved();
+                }
             }
             else
-                parameters = new object[3];
+            {
+                if (moved)
+                {
+                    _Parameters = new object[5];
+                    SetThisUndoRedoMoved();
+                }
+                else
+                {
+                    _Parameters = new object[3];
+                    SetThisUndoRedoNotMoved();
+                }
+            }
 
-            parameters[++parsIndex] = new Size(RenderSize.Width, RenderSize.Height); //new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
-            parameters[++parsIndex] = _UndoSize;
-            parameters[++parsIndex] = this;
-            undo += x => Console.WriteLine($"*** UNDO resize to = {(Size)x[parsIndex - 1]}");
-            undo += x => ((EntityBorderUserControl)x[parsIndex]).AutomaticResizeToWithoutUndoRedo((Size)x[parsIndex - 1]);
-            redo += x => Console.WriteLine($"*** REDO resize to = {(Size)x[parsIndex - 2]}");
-            redo += x => ((EntityBorderUserControl)x[parsIndex]).AutomaticResizeToWithoutUndoRedo((Size)x[parsIndex - 2]);
-            UndoRedoCommandManager.Instance.NewCommand(Properties.UndoRedoNames.Default.EntityBorder_Resize, undo, parameters, redo, parameters);
+            UndoRedoCommandManager.Instance.NewCommand(Properties.UndoRedoNames.Default.EntityBorder_Resize, _Undo, _Parameters, _Redo, _Parameters);
+            _Undo = null;
+            _Redo = null;
+            _ParsIndex = -1;
+            _Parameters = null;
         }
         #endregion
     }

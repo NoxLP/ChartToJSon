@@ -16,7 +16,7 @@ namespace ChartCanvasNamespace.VisualsBase
         void OtherVisualFinishResizing();
         void OtherVisualStartResizing();
         void OtherVisualResize(double width, double height);
-        void OtherVisualFastResize(double width, double height);
         void AutomaticResizeToWithoutUndoRedo(Size size);
+        void OtherVisualFastResize(double width, double height);
     }
 }

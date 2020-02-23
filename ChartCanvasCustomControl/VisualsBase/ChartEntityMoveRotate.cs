@@ -12,12 +12,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using UndoRedoSystem;
 using ChartCanvasNamespace.OtherVisuals;
+using WPFHelpers.CancelActions;
 
 namespace ChartCanvasNamespace.VisualsBase
 {
     public class ChartEntityMoveRotate : ChartEntityBorderCanBeSelected, IVisualMoveRotate, IVisualWithSnappingCoordinates
     {
         internal RotateTransform _RotateTransform;
+
         public virtual Grid BaseRootGrid { get; }
         public virtual EntityMovingThumb BaseMovingThumb { get; }
         public virtual EntityResizingThumb BaseResizingThumb { get; }
@@ -75,8 +77,8 @@ namespace ChartCanvasNamespace.VisualsBase
         internal virtual void UpdateAnchorPoint() { throw new NotImplementedException(); }
         public virtual void BindShapeSize() { throw new NotImplementedException(); }
 
-        #region move/resize/rotate
-        protected class DraggingData
+        #region move/rotate
+        public class DraggingData
         {
             public Point p;
             public double distanceMovingThumbToCenterX;
@@ -93,7 +95,6 @@ namespace ChartCanvasNamespace.VisualsBase
 
         public Point UndoMovingCoordinates { get { return _UndoMovingCoordinates; } }
         public double UndoAngle { get { return _UndoAngle; } }
-
         public virtual TemporalCurrentSnapCoordinates GetTemporalCurrentSnapCoordinates(Point p) { throw new NotImplementedException(); }
         public virtual void DraggingFinished()
         {
@@ -134,9 +135,20 @@ namespace ChartCanvasNamespace.VisualsBase
         }
         protected virtual void SnapPoint_Moving(ref Point p, SnapToObjectsHandlerClass.SnapTo snap)
         {
-            if (snap != null)
+            if (snap != null && (snap.Snap || snap.OutOfCanvas))
             {
-                if (snap.X.HasValue)
+                if (snap.OutOfCanvasLeft.HasValue || snap.OutOfCanvasRight.HasValue)
+                {
+                    if (snap.OutOfCanvasLeft.HasValue)
+                    {
+                        p.X = snap.OutOfCanvasLeft.Value - BaseRootGrid.ColumnDefinitions[0].ActualWidth;
+                    }
+                    else if (snap.OutOfCanvasRight.HasValue)
+                    {
+                        p.X = snap.OutOfCanvasRight.Value - BaseRootGrid.ColumnDefinitions[0].ActualWidth - ContentMargin.Left - BaseRootGrid.ColumnDefinitions[1].ActualWidth - ContentMargin.Right;
+                    }
+                }
+                else if (snap.X.HasValue)
                 {
                     switch (snap.XType)
                     {
@@ -160,7 +172,23 @@ namespace ChartCanvasNamespace.VisualsBase
                     p.X += SelectionBorderThickness;
                 }
 
-                if (snap.Y.HasValue)
+                if (snap.OutOfCanvasTop.HasValue || snap.OutOfCanvasBottom.HasValue)
+                {
+                    if (snap.OutOfCanvasTop.HasValue)
+                    {
+                        Console.WriteLine($@"
+----------------------------------------------
+Out top: {snap.OutOfCanvasTop.Value} 
+old p.y: {p.Y}");
+                        p.Y = snap.OutOfCanvasTop.Value - BaseRootGrid.RowDefinitions[0].ActualHeight;
+                        Console.WriteLine($@"new p.y: {p.Y}");
+                    }
+                    else if (snap.OutOfCanvasBottom.HasValue)
+                    {
+                        p.Y = snap.OutOfCanvasBottom.Value - BaseRootGrid.RowDefinitions[0].ActualHeight - ContentMargin.Top - BaseRootGrid.RowDefinitions[1].ActualHeight - ContentMargin.Bottom;
+                    }
+                }
+                else if (snap.Y.HasValue)
                 {
                     switch (snap.YType)
                     {
@@ -212,10 +240,16 @@ namespace ChartCanvasNamespace.VisualsBase
         }
         public void OtherVisualMove(double x, double y)
         {
-            Canvas.SetLeft(this, x);
-            Canvas.SetTop(this, y);
-            UpdateAnchorPoint();
-            CalculateSnapCoords();
+            var currentPosition = new Point(x, y);
+            var delta = ChartCustomControl.Instance.SnapToObjectsHandler.CheckOutOfCanvasAndReturnPositionDelta(GetTemporalCurrentSnapCoordinates(currentPosition));
+            if (delta.X != 0 || delta.Y != 0)
+            {
+                AutomaticMoveToWithoutUndoRedo(new Point(currentPosition.X + delta.X, currentPosition.Y + delta.Y));
+            }
+            else
+            {
+                AutomaticMoveToWithoutUndoRedo(currentPosition);
+            }
         }
         public void OtherVisualRotate(double angle)
         {
@@ -279,7 +313,9 @@ namespace ChartCanvasNamespace.VisualsBase
             var currentMousePositionRelativeToCanvas = e.GetPosition(ChartCustomControl.Instance.ChartCanvas);
             var data = GetDraggingData(currentMousePositionRelativeToCanvas);
 
-            var snap = ChartCustomControl.Instance.SnapToObjectsHandler.CheckPointShouldSnap(this, GetTemporalCurrentSnapCoordinates(currentMousePositionRelativeToCanvas));
+            var tempCoords = GetTemporalCurrentSnapCoordinates(data.p);
+
+            var snap = ChartCustomControl.Instance.SnapToObjectsHandler.CheckPointShouldSnap(this, tempCoords);
 
             SnapPoint_Moving(ref data.p, snap);
 
@@ -428,9 +464,10 @@ namespace ChartCanvasNamespace.VisualsBase
 
                     parameters[++parsIndex] = item.Visual.UndoMovingCoordinates;
                     parameters[++parsIndex] = item;
-                    undo += x => ((SelectedBorderMovingData)x[parsIndex]).Visual.AutomaticMoveToWithoutUndoRedo((Point)x[parsIndex - 1]);
+                    var itemIndex = parsIndex;
                     parameters[++parsIndex] = new Point(Canvas.GetLeft(item.Visual.GetUIElement), Canvas.GetTop(item.Visual.GetUIElement));
-                    redo += x => ((SelectedBorderMovingData)x[parsIndex - 1]).Visual.AutomaticMoveToWithoutUndoRedo((Point)x[parsIndex]);
+                    undo += x => ((SelectedBorderMovingData)x[itemIndex]).Visual.AutomaticMoveToWithoutUndoRedo((Point)x[itemIndex - 1]);
+                    redo += x => ((SelectedBorderMovingData)x[itemIndex]).Visual.AutomaticMoveToWithoutUndoRedo((Point)x[itemIndex + 1]);
                 }
 
                 _SelectedBordersWhenMoving = null;
@@ -442,9 +479,9 @@ namespace ChartCanvasNamespace.VisualsBase
             parameters[++parsIndex] = _UndoMovingCoordinates;
             parameters[++parsIndex] = this;
             undo += x => Console.WriteLine($"*** UNDO move to = {(Point)x[parsIndex - 1]}");
-            undo += x => ((EntityBorderUserControl)x[parsIndex]).AutomaticMoveToWithoutUndoRedo((Point)x[parsIndex - 1]);
+            undo += x => ((ChartEntityMoveRotate)x[parsIndex]).AutomaticMoveToWithoutUndoRedo((Point)x[parsIndex - 1]);
             redo += x => Console.WriteLine($"*** REDO move to = {(Point)x[parsIndex - 2]}");
-            redo += x => ((EntityBorderUserControl)x[parsIndex]).AutomaticMoveToWithoutUndoRedo((Point)x[parsIndex - 2]);
+            redo += x => ((ChartEntityMoveRotate)x[parsIndex]).AutomaticMoveToWithoutUndoRedo((Point)x[parsIndex - 2]);
             UndoRedoCommandManager.Instance.NewCommand(Properties.UndoRedoNames.Default.EntityBorder_Move, undo, parameters, redo, parameters);
         }
         private void CreateRotateUndoRedoCommands()
@@ -462,9 +499,10 @@ namespace ChartCanvasNamespace.VisualsBase
 
                     parameters[++parsIndex] = item.Visual.UndoAngle;
                     parameters[++parsIndex] = item;
-                    undo += x => ((SelectedBorderRotatingData)x[parsIndex]).Visual.AutomaticRotateToWithoutUndoRedo((double)x[parsIndex - 1]);
+                    var itemIndex = parsIndex;
                     parameters[++parsIndex] = _RotateTransform.Angle;
-                    redo += x => ((SelectedBorderRotatingData)x[parsIndex - 1]).Visual.AutomaticRotateToWithoutUndoRedo((double)x[parsIndex]);
+                    undo += x => ((SelectedBorderRotatingData)x[itemIndex]).Visual.AutomaticRotateToWithoutUndoRedo((double)x[itemIndex - 1]);
+                    redo += x => ((SelectedBorderRotatingData)x[itemIndex]).Visual.AutomaticRotateToWithoutUndoRedo((double)x[itemIndex + 1]);
                 }
 
                 _SelectedBordersWhenMoving = null;
@@ -476,9 +514,9 @@ namespace ChartCanvasNamespace.VisualsBase
             parameters[++parsIndex] = _UndoAngle;
             parameters[++parsIndex] = this;
             undo += x => Console.WriteLine($"*** UNDO rotation to = {(double)x[parsIndex - 1]}");
-            undo += x => ((EntityBorderUserControl)x[parsIndex]).AutomaticRotateToWithoutUndoRedo((double)x[parsIndex - 1]);
+            undo += x => ((ChartEntityMoveRotate)x[parsIndex]).AutomaticRotateToWithoutUndoRedo((double)x[parsIndex - 1]);
             redo += x => Console.WriteLine($"*** REDO rotation to = {(double)x[parsIndex - 2]}");
-            redo += x => ((EntityBorderUserControl)x[parsIndex]).AutomaticRotateToWithoutUndoRedo((double)x[parsIndex - 2]);
+            redo += x => ((ChartEntityMoveRotate)x[parsIndex]).AutomaticRotateToWithoutUndoRedo((double)x[parsIndex - 2]);
             UndoRedoCommandManager.Instance.NewCommand(Properties.UndoRedoNames.Default.EntityBorder_Rotation, undo, parameters, redo, parameters);
         }
         #endregion

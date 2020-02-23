@@ -19,9 +19,6 @@ namespace ChartCanvasNamespace.Lines
         {
             Width = Size;
             Height = Size;
-            //RenderTransformOrigin = new Point(0.5d, 0.5d);
-            //RotateTransform rotateTransform = new RotateTransform(45);
-            //RenderTransform = rotateTransform;
             _Connection = line;
             ConnecterIndex = connecterIndex;
             Panel.SetZIndex(this, Properties.Settings.Default.ZIndex_LineConnecter);
@@ -59,7 +56,7 @@ namespace ChartCanvasNamespace.Lines
         #endregion
 
         #region cancel, undo/redo
-        public string Id { get; private set; }
+        public string CancellableId => $"ChCuCo_LineConnecter_{Guid.NewGuid().ToString()}";
         public Action CancelCurrentActionDelegate { get; private set; }
         public Func<Task> AsyncCancelCurrentActionDelegate => null;
 

@@ -41,6 +41,8 @@ namespace ChartCanvasNamespace.Entities
                         //_SizeToContentMarginConverter = new Converters.EntityBorderSizeToContentMarginConverter();
                         _ShapeToBorderSizeConverter = new Converters.EntityBorderShapeToBorderSizeConverter();
                         _ContentToShapeSizeConverter = new Converters.EntityBorderContentToShapeSizeConverter();
+                        _SelectedBrush = (SolidColorBrush)FindResource("SelectionBorderSelectedBrush");
+                        _UnselectedBrush = (SolidColorBrush)FindResource("SelectionBorderUnSelectedBrush");
                     }
                 }
             }
@@ -243,22 +245,22 @@ namespace ChartCanvasNamespace.Entities
         {
             ChartCustomControl.Instance._MouseEnterOnVisual++;
             ShowAllThumbs();
-            Application.Current.MainWindow.KeyDown += KeyDown;
-            Application.Current.MainWindow.KeyUp += KeyUp;
+            Application.Current.MainWindow.KeyDown += OnKeyDown;
+            Application.Current.MainWindow.KeyUp += OnKeyUp;
         }
         private void RootGrid_MouseLeave(object sender, MouseEventArgs e)
         {
             ChartCustomControl.Instance._MouseEnterOnVisual--;
             HideAllThumbs();
-            Application.Current.MainWindow.KeyDown -= KeyDown;
-            Application.Current.MainWindow.KeyUp -= KeyUp;
+            Application.Current.MainWindow.KeyDown -= OnKeyDown;
+            Application.Current.MainWindow.KeyUp -= OnKeyUp;
             if (!_MovingThumbVisible)
             {
                 _MovingThumbVisible = true;
                 ToggleVisibleThumbs();
             }
         }
-        private void KeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
             Console.WriteLine("Keydown 0");
             if (_IsMoving || _IsResizing || _IsRotating)
@@ -271,7 +273,7 @@ namespace ChartCanvasNamespace.Entities
                 ToggleVisibleThumbs();
             }
         }
-        private void KeyUp(object sender, KeyEventArgs e)
+        private void OnKeyUp(object sender, KeyEventArgs e)
         {
             if (_IsMoving || _IsResizing || _IsRotating)
                 return;
@@ -319,29 +321,42 @@ namespace ChartCanvasNamespace.Entities
         {
             var coords = new TemporalCurrentSnapCoordinates();
 
-            //Size size = RenderSize;
-            //Point ofs = new Point(size.Width / 2, size.Height / 2); //isInput ? 0 : size.Height);
-            //var p = this.TranslatePoint(ofs, ChartCustomControl.Instance.ChartCanvas);
-
-            //var bcSize = new Point(BorderContent.RenderSize.Width, BorderContent.RenderSize.Height);
-            //var bcPoint = this.TranslatePoint(bcSize, ChartCustomControl.Instance.ChartCanvas);
-
-            coords.CenterX = (p.X); //Canvas.GetLeft(this);
-            coords.CenterY = (p.Y); //Canvas.GetTop(this);
-            coords.Left = (p.X - (BorderContent.RenderSize.Width * 0.5d));
-            coords.Right = (p.X + (BorderContent.RenderSize.Width * 0.5d));
-            coords.Top = (p.Y - (BorderContent.RenderSize.Height * 0.5d));
-            coords.Bottom = (p.Y + (BorderContent.RenderSize.Height * 0.5d));
-            coords.ThLeft = p.X - (BorderContent.ActualWidth * 0.5d) - (RootGrid.ColumnDefinitions[0].ActualWidth * 0.5d);
-            coords.ThRight = p.X + (BorderContent.ActualWidth * 0.5d) + (RootGrid.ColumnDefinitions[0].ActualWidth * 0.5d);
-            coords.ThTop = p.Y - (BorderContent.ActualHeight * 0.5d) - (RootGrid.RowDefinitions[0].ActualHeight * 0.5d);
-            coords.ThBottom = p.Y + (BorderContent.ActualHeight * 0.5d) + (RootGrid.RowDefinitions[0].ActualHeight * 0.5d);
+            double w, h;
+            double shapeW = 0;
+            double shapeH = 0;
+            if (MyShape != null)
+            {
+                shapeW = ContentMargin.Right + ContentMargin.Left;
+                shapeH = ContentMargin.Top + ContentMargin.Bottom;
+            }
+            if (double.IsNaN(ContentView.Width))
+            {
+                w = BorderContent.RenderSize.Width + shapeW;
+                h = BorderContent.RenderSize.Height + shapeH;
+            }
+            else
+            {
+                w = ContentView.Width + shapeW;
+                h = ContentView.Height + shapeH;
+            }
+            w *= 0.5d;
+            h *= 0.5d;
+            coords.CenterX = p.X + w + RootGrid.ColumnDefinitions[0].ActualWidth;
+            coords.CenterY = p.Y + h + RootGrid.RowDefinitions[0].ActualHeight;
+            coords.Left = coords.CenterX - w;
+            coords.Right = coords.CenterX + w;
+            coords.Top = coords.CenterY - h;
+            coords.Bottom = coords.CenterY + h;
+            coords.ThLeft = coords.Left - (RootGrid.ColumnDefinitions[0].ActualWidth * 0.5d);
+            coords.ThRight = coords.Right + (RootGrid.ColumnDefinitions[2].ActualWidth * 0.5d);
+            coords.ThTop = coords.Top - (RootGrid.RowDefinitions[0].ActualHeight * 0.5d);
+            coords.ThBottom = coords.Bottom + (RootGrid.RowDefinitions[2].ActualHeight * 0.5d);
 
             return coords;
         }
         internal override void CalculateSnapCoords(bool automatic = false)
         {
-            if(!_IsMoving)
+            if (!_IsMoving)
                 ChartCustomControl.Instance.SnapToObjectsHandler.UpdateSnapRemoveBorder(this);
 
             CenterX = (AnchorPoint.X); //Canvas.GetLeft(this);
@@ -350,7 +365,7 @@ namespace ChartCanvasNamespace.Entities
             double w, h;
             double shapeW = 0;
             double shapeH = 0;
-            if(MyShape != null)
+            if (MyShape != null)
             {
                 shapeW = ContentMargin.Right + ContentMargin.Left;
                 shapeH = ContentMargin.Top + ContentMargin.Bottom;
@@ -549,12 +564,14 @@ namespace ChartCanvasNamespace.Entities
         }
         #endregion
 
+        private static SolidColorBrush _SelectedBrush;
+        private static SolidColorBrush _UnselectedBrush;
         protected override void UpdateSelectedVisualEffect()
         {
             if (IsSelected)
             {
                 SelectionBorderThickness = 2d;
-                SelectionBorderBrush = (SolidColorBrush)FindResource("SelectionBorderSelectedBrush");
+                SelectionBorderBrush = _SelectedBrush;
                 Canvas.SetLeft(this, Canvas.GetLeft(this) - 1);
                 Canvas.SetTop(this, Canvas.GetTop(this) - 1);
             }
@@ -562,7 +579,7 @@ namespace ChartCanvasNamespace.Entities
             {
                 SelectionBorderThickness = 1d;
                 if (MyShapeStrokeBrush == null)
-                    SelectionBorderBrush = (SolidColorBrush)FindResource("SelectionBorderUnSelectedBrush");
+                    SelectionBorderBrush = _UnselectedBrush;
                 else
                     SelectionBorderBrush = (SolidColorBrush)MyShapeStrokeBrush;
                 Canvas.SetLeft(this, Canvas.GetLeft(this) + 1);

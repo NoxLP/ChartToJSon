@@ -74,6 +74,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="IChartObjectCanBeRemovedByParent.cs" />
     <Compile Include="Lines\aChartArrowLineBase.cs" />
+    <Compile Include="Lines\ArrowEnds.cs" />
     <Compile Include="Lines\LineConnection.cs" />
     <Compile Include="Lines\LineConnectionSaveProxy.cs" />
     <Compile Include="Lines\LineSegments\aLineSegmentBase.cs" />
@@ -86,7 +87,6 @@
     <Compile Include="Lines\LineSegments\LineSegmentTypesEnum.cs" />
     <Compile Include="Lines\LineSegments\LineStartSegment.cs" />
     <Compile Include="Lines\LineSegments\LineUniqueSegment.cs" />
-    <Compile Include="Lines\Petzold.Media2D\ArrowPolyline.cs" />
     <Compile Include="MessageFilter.cs" />
     <Compile Include="OtherVisuals\IVisualText.cs" />
     <Compile Include="OtherVisuals\IVisualTextViewModel.cs" />
@@ -131,9 +131,6 @@
     <Compile Include="Lines\LineConnecter.cs" />
     <Compile Include="Lines\LineDivider.cs" />
     <Compile Include="Lines\LineDragger.cs" />
-    <Compile Include="Lines\Petzold.Media2D\ArrowEnds.cs" />
-    <Compile Include="Lines\Petzold.Media2D\ArrowLine.cs" />
-    <Compile Include="Lines\Petzold.Media2D\ArrowLineBase.cs" />
     <Compile Include="Selection\aUIElementCanBeSelected.cs" />
     <Compile Include="Selection\ChartItemsSelectionHandlerClass.cs" />
     <Compile Include="Selection\SelectedBorderMovingData.cs" />
@@ -183,7 +180,6 @@
     </Compile>
     <Compile Include="Entities\EntityMovingThumb.cs" />
     <Compile Include="Exceptions\LineDraggerUserControlNotFoundException.cs" />
-    <Compile Include="Lines\OLDLineBetweenConnectingThumbs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

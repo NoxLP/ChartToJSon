@@ -12,6 +12,7 @@ namespace ChartCanvasNamespace.Selection
     {
         public IVisualResizeMoveRotate Visual;
         public Point MovingThumbPositionWhenClickedRelativeToCanvas;
+        public Point ItemCoordsWhenClickedRelativeToCanvas;
         public Size OriginalItemSize;
         public Point Distance;
 

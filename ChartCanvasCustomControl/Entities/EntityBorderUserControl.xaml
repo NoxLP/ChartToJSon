@@ -9,7 +9,7 @@
                                           xmlns:thumbs="clr-namespace:ChartCanvasNamespace.Thumbs"
                                           xmlns:sys="clr-namespace:System;assembly=mscorlib"
                                           xmlns:props="clr-namespace:ChartCanvasNamespace.Properties"
-             mc:Ignorable="d" x:Name="Root" Loaded="Root_Loaded" SizeChanged="Root_SizeChanged" KeyDown="KeyDown" KeyUp="KeyUp" SnapsToDevicePixels="True"
+             mc:Ignorable="d" x:Name="Root" Loaded="Root_Loaded" SizeChanged="Root_SizeChanged" KeyDown="OnKeyDown" KeyUp="OnKeyUp" SnapsToDevicePixels="True"
              Canvas.Left="{Binding CanvasX,Mode=TwoWay}" Canvas.Top="{Binding CanvasY,Mode=TwoWay}" IsSelected="{Binding IsSelected,Mode=TwoWay}" Background="Transparent"
              d:DesignHeight="450" d:DesignWidth="800">
     <!--SizeChanged="UserControl_SizeChanged"-->
@@ -29,7 +29,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Name="RootGrid" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-          KeyDown="KeyDown" KeyUp="KeyUp"
+          KeyDown="OnKeyDown" KeyUp="OnKeyUp"
           MouseDown="RootGrid_MouseDown" MouseUp="RootGrid_MouseUp" MouseEnter="RootGrid_MouseEnter" MouseLeave="RootGrid_MouseLeave">
         <Grid.RowDefinitions>
             <RowDefinition Height="15"/>
@@ -42,7 +42,7 @@
             <ColumnDefinition Width="15"/>
         </Grid.ColumnDefinitions>
         <local:EntityRotatingThumb x:Name="RotatingThumb" Grid.Row="0" Grid.Column="1" SnapsToDevicePixels="True" Width="12" Height="12"
-                                       Visibility="Hidden" KeyDown="KeyDown" KeyUp="KeyUp" 
+                                       Visibility="Hidden" KeyDown="OnKeyDown" KeyUp="OnKeyUp" 
                                        DragStarted="RotatingThumb_DragStarted" DragCompleted="RotatingThumb_DragCompleted" DragDelta="RotatingThumb_DragDelta" 
                                    MouseDoubleClick="RotatingThumb_MouseDoubleClick" PreviewMouseDoubleClick="RotatingThumb_MouseDoubleClick"/>
         <!--PreviewMouseLeftButtonDown="RotatingThumb_PreviewMouseDown" PreviewMouseLeftButtonUp="RotatingThumb_PreviewMouseUp" PreviewMouseMove="RotatingThumb_PreviewMouseMove"/>-->
@@ -57,11 +57,11 @@
         <local:EntityMovingThumb x:Name="MovingThumb" Grid.Row="2" Grid.Column="2" SnapsToDevicePixels="True" HorizontalAlignment="Left" VerticalAlignment="Top"
                                  Visibility="Visible" Width="12" Height="12"
                                  PreviewMouseDown="MovingThumb_PreviewMouseDown" PreviewMouseUp="MovingThumb_PreviewMouseUp" PreviewMouseMove="MovingThumb_PreviewMouseMove"
-                                 KeyDown="KeyDown" KeyUp="KeyUp"/>
+                                 KeyDown="OnKeyDown" KeyUp="OnKeyUp"/>
         <local:EntityResizingThumb x:Name="ResizingThumb" Grid.Row="2" Grid.Column="2" SnapsToDevicePixels="True"
                                    VerticalAlignment="Top" Height="10" Width="10" HorizontalAlignment="Left" Visibility="Hidden"
                                    PreviewMouseDown="ResizingThumb_PreviewMouseDown" PreviewMouseUp="ResizingThumb_PreviewMouseUp" PreviewMouseMove="ResizingThumb_PreviewMouseMove"
-                                   KeyDown="KeyDown" KeyUp="KeyUp"/>
+                                   KeyDown="OnKeyDown" KeyUp="OnKeyUp"/>
         <Grid Name="ContentGrid" Grid.Row="1" Grid.Column="1" UseLayoutRounding="True" Background="Transparent" Width="auto" Height="auto" IsHitTestVisible="True">
             <ContentPresenter x:Name="BorderShape" IsHitTestVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center"
                               Panel.ZIndex="{Binding Source={x:Static props:Settings.Default},Path=ZIndex_EntityShape}"

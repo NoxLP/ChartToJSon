@@ -11,7 +11,8 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:converters="clr-namespace:ChartToJson.View.Converters"
         xmlns:chartConverters="clr-namespace:ChartCanvasNamespace.Converters;assembly=ChartCanvas"
-        xmlns:controlsLib="clr-namespace:NET471WpfUserControlsLibrary;assembly=4.7.1.NETWpfUserControlsLibrary"
+        xmlns:controlsLibRTexts="clr-namespace:NET471WpfUserControlsLibrary.RestrictedTextBoxes;assembly=4.7.1.NETWpfUserControlsLibrary"
+        xmlns:controlsLibPickers="clr-namespace:NET471WpfUserControlsLibrary.ChoosersPickers;assembly=4.7.1.NETWpfUserControlsLibrary"
         mc:Ignorable="d" Name="Window" Loaded="Window_Loaded" DataContext="{StaticResource MainVMInstance}" WindowState="Maximized"
         Title="{Binding MainWindowTitle}" Height="450" Width="800">
     <Window.Resources>
@@ -222,11 +223,11 @@
                             <ColumnDefinition Width="110"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Row="0" Grid.Column="0" Content="Background:" VerticalAlignment="Bottom"/>
-                        <controlsLib:ColorPickerPalette Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="5,4"
+                        <controlsLibPickers:ColorPickerPalette Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch" Margin="5,4"
                                                         SelectedBrush="{Binding EntitiesBackgroundBrush,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                         DefaultSelectedBrush="White"/>
                         <Label Grid.Row="0" Grid.Column="1" Content="Shape stroke:" VerticalAlignment="Bottom"/>
-                        <controlsLib:ColorPickerPalette Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" Margin="5,4"
+                        <controlsLibPickers:ColorPickerPalette Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" Margin="5,4"
                                                         SelectedBrush="{Binding EntitiesShapeBrush,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                         DefaultSelectedBrush="Black"/>
                     </Grid>
@@ -283,7 +284,7 @@
                         </StackPanel>
                         <DockPanel Grid.Row="1" Margin="3">
                             <Label Content="Degrees" VerticalAlignment="Center"/>
-                            <controlsLib:DoubleInputTextBox Margin="3" HorizontalAlignment="Stretch" Width="auto"
+                            <controlsLibRTexts:DoubleInputTextBox Margin="3" HorizontalAlignment="Stretch" Width="auto"
                                                             DoubleValue="{Binding UserSelectedEntitiesAngle,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                                             ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
                         </DockPanel>
@@ -308,11 +309,11 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Grid.Column="0" Content="Width"/>
-                        <controlsLib:DoubleInputTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,2"
+                        <controlsLibRTexts:DoubleInputTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,2"
                                                         DoubleValue="{Binding UserSelectedEntitiesWidth, Mode=OneWay}"
                                                         ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
                         <Label Grid.Row="1" Grid.Column="0" Content="Height"/>
-                        <controlsLib:DoubleInputTextBox Grid.Row="1" Grid.Column="1" Margin="0,2"
+                        <controlsLibRTexts:DoubleInputTextBox Grid.Row="1" Grid.Column="1" Margin="0,2"
                                                         DoubleValue="{Binding UserSelectedEntitiesHeight, Mode=OneWay}"
                                                         ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
                         <CheckBox Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0"
@@ -329,7 +330,7 @@
             </Button>
             <Popup Name="FontChooserPopup" PlacementTarget="{Binding ElementName=FontChooserButton}" StaysOpen="False">
                 <Border BorderBrush="Gray" BorderThickness="1" Padding="2" Background="White">
-                    <controlsLib:FontChooserUserControl
+                    <controlsLibPickers:FontChooserUserControl
                     ChoosedFontFamily="{Binding ChoosedFontFamily, Mode=TwoWay}"
                     ChoosedFontSize="{Binding ChoosedFontSize, Mode=TwoWay}"
                     ChoosedFontStyle="{Binding ChoosedFontStyle, Mode=TwoWay}"
@@ -376,15 +377,15 @@
                             <TextBox Text="{Binding ElementName=GridThSlider, Path=Value}" Width="40" Height="20" VerticalAlignment="Center" Margin="3"/>
                         </StackPanel>
                         <Label Grid.Row="1" Grid.Column="0" Content="Grid color:"/>
-                        <controlsLib:ColorPickerPalette Name="GridColorPicker" Grid.Row="1" Grid.Column="1" Margin="3"
+                        <controlsLibPickers:ColorPickerPalette Name="GridColorPicker" Grid.Row="1" Grid.Column="1" Margin="3"
                                                         DefaultSelectedBrush="{Binding DefaultGridBrush}"
                                                         SelectedBrush="{Binding SelectedGridBrush,Mode=TwoWay}"/>
                         <Label Grid.Row="2" Grid.Column="0" Content="Canvas color:"/>
-                        <controlsLib:ColorPickerPalette Name="CanvasColorPicker" Grid.Row="2" Grid.Column="1" Margin="3" 
+                        <controlsLibPickers:ColorPickerPalette Name="CanvasColorPicker" Grid.Row="2" Grid.Column="1" Margin="3" 
                                                         DefaultSelectedBrush="{Binding DefaultCanvasBackground}"
                                                         SelectedBrush="{Binding SelectedCanvasBackground,Mode=TwoWay}"/>
                         <Label Grid.Row="3" Grid.Column="0" Content="Workspace color:"/>
-                        <controlsLib:ColorPickerPalette Name="WorkspaceColorPicker" Grid.Row="3" Grid.Column="1" Margin="3" 
+                        <controlsLibPickers:ColorPickerPalette Name="WorkspaceColorPicker" Grid.Row="3" Grid.Column="1" Margin="3" 
                                                         DefaultSelectedBrush="{Binding DefaultWorkspaceBackground}"
                                                         SelectedBrush="{Binding SelectedWorkspaceBackground,Mode=TwoWay}"/>
                     </Grid>
@@ -442,10 +443,10 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Grid.Column="0" Content="Width"/>
-                        <controlsLib:DoubleInputTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,2"
+                        <controlsLibRTexts:DoubleInputTextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,2"
                                  DoubleValue="{Binding CanvasWidth, Mode=TwoWay}"/>
                         <Label Grid.Row="1" Grid.Column="0" Content="Height"/>
-                        <controlsLib:DoubleInputTextBox Grid.Row="1" Grid.Column="1" Margin="0,2"
+                        <controlsLibRTexts:DoubleInputTextBox Grid.Row="1" Grid.Column="1" Margin="0,2"
                                  DoubleValue="{Binding CanvasHeight, Mode=TwoWay}"/>
                         <CheckBox Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0"
                                   IsChecked="{Binding Maintain12Proportion}">
@@ -488,18 +489,3 @@
         </Border>
     </Grid>
 </Window>
-
-<!--<ZP:ZoomAndPanControl x:Name="zoomAndPanControl" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="Auto" Width="Auto" Background="#FFE5E5E5"
-                              Panel.ZIndex="0"
-                              ContentScale="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentScale, Mode=TwoWay}"
-                              ContentOffsetX="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentOffsetX, Mode=TwoWay}"
-                              ContentOffsetY="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentOffsetY, Mode=TwoWay}"
-                              ContentViewportWidth="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentViewportWidth, Mode=OneWayToSource}"
-                              ContentViewportHeight="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentViewportHeight, Mode=OneWayToSource}"
-                              MouseDown="zoomAndPanControl_MouseDown" MouseUp="zoomAndPanControl_MouseUp" MouseMove="zoomAndPanControl_MouseMove" 
-                              MouseWheel="zoomAndPanControl_MouseWheel" MouseDoubleClick="zoomAndPanControl_MouseDoubleClick">
-            <chartCanvas:ChartCustomControl Name="MyChartControl" Background="Transparent" MouseWheel="zoomAndPanControl_MouseWheel" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                          EntitiesViewModels="{Binding EntitiesVM,Mode=TwoWay}" Panel.ZIndex="10"
-                                          Width="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentWidth}" 
-                                          Height="{Binding Source={x:Static ZPModel:ZoomAndPanDataModel.Instance}, Path=ContentHeight}"/>
-        </ZP:ZoomAndPanControl>-->

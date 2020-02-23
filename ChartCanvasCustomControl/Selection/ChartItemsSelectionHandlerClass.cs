@@ -314,6 +314,7 @@ namespace ChartCanvasNamespace.Selection
                 {
                     Visual = border as IVisualResizeMoveRotate,
                     MovingThumbPositionWhenClickedRelativeToCanvas = border.BaseResizingThumb.GetAnchorPoint(),
+                    ItemCoordsWhenClickedRelativeToCanvas = new Point(Canvas.GetLeft(border), Canvas.GetTop(border)),
                     OriginalItemSize = new Size(border.ActualWidth, border.ActualHeight)
                 };
 
@@ -332,6 +333,7 @@ namespace ChartCanvasNamespace.Selection
                 {
                     Visual = border,
                     MovingThumbPositionWhenClickedRelativeToCanvas = border.BaseResizingThumb.GetAnchorPoint(),
+                    ItemCoordsWhenClickedRelativeToCanvas = new Point(Canvas.GetLeft(border), Canvas.GetTop(border)),
                     OriginalItemSize = new Size(border.ActualWidth, border.ActualHeight)
                 };
 

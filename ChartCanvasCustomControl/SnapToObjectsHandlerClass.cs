@@ -38,6 +38,12 @@ namespace ChartCanvasNamespace
             public SnapBorderTypeEnum YType = SnapBorderTypeEnum.None;
             public bool Snap { get { return X.HasValue || Y.HasValue; } }
 
+            public double? OutOfCanvasTop = null;
+            public double? OutOfCanvasBottom = null;
+            public double? OutOfCanvasLeft = null;
+            public double? OutOfCanvasRight = null;
+            public bool OutOfCanvas { get { return OutOfCanvasBottom.HasValue || OutOfCanvasTop.HasValue || OutOfCanvasLeft.HasValue || OutOfCanvasRight.HasValue; } }
+
             public override string ToString()
             {
                 return $"({(X.HasValue ? X.ToString() : "null")}, {(Y.HasValue ? Y.ToString() : "null")}";
@@ -465,27 +471,82 @@ namespace ChartCanvasNamespace
             }
         }
 
+        private void CheckOutOfCanvasAndSetInCanvas(TemporalCurrentSnapCoordinates coordinates)
+        {
+            if (coordinates.Left < 0)
+            {
+                Console.WriteLine($"left {coordinates.Left} to 0");
+                _LastSnap.OutOfCanvasLeft = 0;
+            }
+            if (coordinates.Top < 0)
+            {
+                Console.WriteLine($"Top {coordinates.Top} to 0");
+                _LastSnap.OutOfCanvasTop = 0;
+            }
+            if (coordinates.Right > ChartCustomControl.Instance.CanvasWidth)
+            {
+                Console.WriteLine($"Right {coordinates.Right} to {ChartCustomControl.Instance.CanvasWidth} ; {ChartCustomControl.Instance.ChartCanvas.ActualWidth}");
+                _LastSnap.OutOfCanvasRight = ChartCustomControl.Instance.CanvasWidth;
+            }
+            if (coordinates.Bottom > ChartCustomControl.Instance.CanvasHeight)
+            {
+                Console.WriteLine($"Bottom {coordinates.Bottom} to {ChartCustomControl.Instance.CanvasHeight}");
+                _LastSnap.OutOfCanvasBottom = ChartCustomControl.Instance.CanvasHeight;
+            }
+        }
+        public Point CheckOutOfCanvasAndReturnPositionDelta(TemporalCurrentSnapCoordinates coordinates)
+        {
+            double x = 0;
+            double y = 0;
+            if (coordinates.Left < 0)
+            {
+                x = -coordinates.Left;
+            }
+            if(coordinates.Top < 0)
+            {
+                y = -coordinates.Top;
+            }
+            if (coordinates.Right > ChartCustomControl.Instance.CanvasWidth)
+            {
+                Console.WriteLine($"Right {coordinates.Right} to {ChartCustomControl.Instance.CanvasWidth} ; {ChartCustomControl.Instance.ChartCanvas.ActualWidth}");
+                x = ChartCustomControl.Instance.CanvasWidth - coordinates.Right;
+            }
+            if (coordinates.Bottom > ChartCustomControl.Instance.CanvasHeight)
+            {
+                Console.WriteLine($"Bottom {coordinates.Bottom} to {ChartCustomControl.Instance.CanvasHeight}");
+                y = ChartCustomControl.Instance.CanvasHeight - coordinates.Bottom;
+            }
+
+            return new Point(x, y);
+        }
+
         public SnapTo CheckPointShouldSnap(IVisualWithSnappingCoordinates uc, TemporalCurrentSnapCoordinates coords)
         {
+            if (!coords.EqualsTruncated(_LastCoords))
+            {
+                _LastSnap = new SnapTo();
+                CheckOutOfCanvasAndSetInCanvas(coords);
+            }
+
             if (!ChartCustomControl.Instance.SnapToGrid && !ChartCustomControl.Instance.SnapToOtherEntities)
+            {
+                if (_LastSnap.OutOfCanvas)
+                    return _LastSnap;
+
                 return null;
+            }
 
             if (coords.EqualsTruncated(_LastCoords))
                 return _LastSnap;
 
 #if DEBUG_SNAP_LINES
             Task forget;
-#endif
-
-            _LastSnap = new SnapTo();
-
-#if DEBUG_SNAP_LINES
             forget = Task.Run(() => Log.Instance.WriteAsync($@"check snap:
 coords: {coords.ToString()}"));
 //range: {range}"));
 #endif
 
-            if(ChartCustomControl.Instance.SnapToGrid)
+            if (ChartCustomControl.Instance.SnapToGrid)
             {
                 CheckSnapXBorderToGrid(true, uc, coords);
                 CheckSnapYBorderToGrid(true, uc, coords);
@@ -503,7 +564,7 @@ coords: {coords.ToString()}"));
                 }
             }
 
-            if (!_LastSnap.Snap)
+            if (!_LastSnap.Snap && !_LastSnap.OutOfCanvas)
             {
                 HidSnapLines();
                 return null;
@@ -679,10 +740,10 @@ point: {point.ToString()}"));
             SnapYCoordinatesLineAnchorPoints.AddListOrItemToDictionary(border._ThBottom.AnchorPoint.Y, visual);
 
 #if DEBUG_SNAP_LINES
-            DrawHorizontalLine(border, border.ThLeft.AnchorPoint.X, Brushes.Red);
-            DrawHorizontalLine(border, border.ThRight.AnchorPoint.X, Brushes.Red);
-            DrawVerticalLine(border, border.ThTop.AnchorPoint.Y, Brushes.Red);
-            DrawVerticalLine(border, border.ThBottom.AnchorPoint.Y, Brushes.Red);
+            DrawHorizontalLine(border, border._ThLeft.AnchorPoint.X, Brushes.Red);
+            DrawHorizontalLine(border, border._ThRight.AnchorPoint.X, Brushes.Red);
+            DrawVerticalLine(border, border._ThTop.AnchorPoint.Y, Brushes.Red);
+            DrawVerticalLine(border, border._ThBottom.AnchorPoint.Y, Brushes.Red);
 #endif
         }
         private void UpdateSnapRemoveLineAnchorPoints(IVisualWithSnappingCoordinates visual)

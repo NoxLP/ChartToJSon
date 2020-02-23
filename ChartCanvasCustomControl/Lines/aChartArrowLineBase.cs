@@ -1,5 +1,4 @@
 ﻿using ChartCanvasNamespace.Selection;
-using Petzold.Media2D;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +11,7 @@ using System.Windows.Shapes;
 
 namespace ChartCanvasNamespace.Lines
 {
+    //Based on http://www.charlespetzold.com/blog/2007/04/191200.html
     public abstract class aChartArrowLineBase : aShapeCanBeSelected
     {
         /// <summary>
@@ -108,7 +108,7 @@ namespace ChartCanvasNamespace.Lines
         /// </summary>
         public static readonly DependencyProperty IsArrowClosedProperty =
             DependencyProperty.Register("IsArrowClosed",
-                typeof(bool), typeof(ArrowLineBase),
+                typeof(bool), typeof(aChartArrowLineBase),
                 new FrameworkPropertyMetadata(false,
                     FrameworkPropertyMetadataOptions.AffectsMeasure));
         #endregion

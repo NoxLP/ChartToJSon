@@ -99,9 +99,6 @@
     <Compile Include="View\Windows\KeysHelpWindow.xaml.cs">
       <DependentUpon>KeysHelpWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Windows\OverviewWindow.xaml.cs">
-      <DependentUpon>OverviewWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Windows\PluginsWindow.xaml.cs">
       <DependentUpon>PluginsWindow.xaml</DependentUpon>
     </Compile>
@@ -131,10 +128,6 @@
     <Page Include="View\Windows\KeysHelpWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Windows\OverviewWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Windows\PluginsWindow.xaml">
       <SubType>Designer</SubType>
@@ -188,10 +181,6 @@
     <ProjectReference Include="..\..\..\4.7.1.NETWpfUserControlsLibrary\4.7.1.NETWpfUserControlsLibrary\4.7.1.NETWpfUserControlsLibrary.csproj">
       <Project>{c3080225-18a9-49dd-85e3-989c02dcfa79}</Project>
       <Name>4.7.1.NETWpfUserControlsLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\InfiniteWorkspaceZoomAndPanSample\ZoomAndPan\ZoomAndPan.csproj">
-      <Project>{468adede-6f5e-40c0-99c9-c6dac4fac934}</Project>
-      <Name>ZoomAndPan</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\NET471WPFVisualTreeHelperExtensions\NET471WPFVisualTreeHelperExtensions\NET471WPFVisualTreeHelperExtensions.csproj">
       <Project>{14c00c1c-72cb-404c-b068-d68e7f669297}</Project>

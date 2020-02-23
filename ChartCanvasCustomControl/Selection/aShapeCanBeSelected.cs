@@ -9,6 +9,7 @@ using System.Windows.Shapes;
 
 namespace ChartCanvasNamespace.Selection
 {
+    //Based on http://www.charlespetzold.com/blog/2007/04/191200.html
     public abstract class aShapeCanBeSelected : Shape, IVisualCanBeSelected
     {
         public CanBeSelectedItemTypeEnum Type => CanBeSelectedItemTypeEnum.LineConnection;
