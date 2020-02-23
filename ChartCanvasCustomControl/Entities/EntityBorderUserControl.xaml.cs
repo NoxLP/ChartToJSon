@@ -415,6 +415,11 @@ namespace ChartCanvasNamespace.Entities
             UpdateAnchorPoint();
             CalculateSnapCoords();
         }
+        private void BorderContent_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (IsSelected)
+                ChartCustomControl.Instance.ChartItemsSelectionHandler.ItemDeselected(this);
+        }
         #endregion
 
         #region select by root grid

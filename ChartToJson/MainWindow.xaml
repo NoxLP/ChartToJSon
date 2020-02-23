@@ -14,6 +14,7 @@
         xmlns:controlsLibRTexts="clr-namespace:NET471WpfUserControlsLibrary.RestrictedTextBoxes;assembly=4.7.1.NETWpfUserControlsLibrary"
         xmlns:controlsLibPickers="clr-namespace:NET471WpfUserControlsLibrary.ChoosersPickers;assembly=4.7.1.NETWpfUserControlsLibrary"
         mc:Ignorable="d" Name="Window" Loaded="Window_Loaded" DataContext="{StaticResource MainVMInstance}" WindowState="Maximized"
+        PreviewKeyDown="Window_PreviewKeyDown"
         Title="{Binding MainWindowTitle}" Height="450" Width="800">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -113,11 +114,11 @@
                     Command="{Binding OpenFileCommand,Mode=OneWay}">
                 <Image Source="pack://application:,,,/Resources/Icons/FolderOpen_16x.png" Height="21"/>
             </Button>
-            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Save current nodes file" IsEnabled="{Binding UnsavedChangesInCurrentFile}" Padding="0"
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Save current nodes file" IsEnabled="{Binding CanSaveWithoutDialog}" Padding="0"
                     Command="{Binding SaveFileCommand,Mode=OneWay}">
                 <Image Source="pack://application:,,,/Resources/Icons/Save_16x.png" Height="20"/>
             </Button>
-            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Save current nodes file" IsEnabled="{Binding CanSaveWithoutDialog}" Padding="0"
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Save current nodes file as..." IsEnabled="{Binding UnsavedChangesInCurrentFile}" Padding="0"
                     Command="{Binding SaveAsFileCommand,Mode=OneWay}">
                 <Image Source="pack://application:,,,/Resources/Icons/SaveAs_16x.png" Height="20"/>
             </Button>
@@ -455,7 +456,7 @@
                     </Grid>
                 </Border>
             </Popup>
-            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="Keys help" Padding="0"
+            <Button Height="28" Width="28" Background="Transparent" Margin="5,2,5,2" ToolTip="About and keys help" Padding="0"
                     FontSize="25" FontWeight="Bold" Foreground="DimGray"
                     Command="{Binding ViewHelpKeysWindowCommand, Mode=OneWay}">
                 <Button.Content>

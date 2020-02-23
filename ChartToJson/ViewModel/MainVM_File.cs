@@ -67,15 +67,18 @@ namespace ChartToJson.ViewModel
         public ICommand SaveFileCommand => new AsyncDelegateCommand(x => SaveFileAsync(), null);
         public ICommand SaveAsFileCommand => new AsyncDelegateCommand(x => SaveAsFileAsync(), null);
 
-        private void NewFile()
+        private void NewFile(bool askConfirmation = true)
         {
-            var confirmation = MessageBox.Show(Properties.Settings.Default.NewFileConfirmationMessage, "Warning", MessageBoxButton.YesNoCancel);
+            if (askConfirmation)
+            {
+                var confirmation = MessageBox.Show(Properties.Settings.Default.NewFileConfirmationMessage, "Warning", MessageBoxButton.YesNoCancel);
 
-            if (confirmation == MessageBoxResult.Cancel)
-                return;
-            //Save before new file
-            if (confirmation == MessageBoxResult.Yes)
-                Task.Run(() => SaveFileAsync());
+                if (confirmation == MessageBoxResult.Cancel)
+                    return;
+                //Save before new file
+                if (confirmation == MessageBoxResult.Yes)
+                    Task.Run(() => SaveFileAsync());
+            }
 
             EntitiesVM.Clear();
             VisualTextsVM.Clear();
@@ -122,7 +125,7 @@ namespace ChartToJson.ViewModel
                 if (confirmation == MessageBoxResult.Yes)
                     await SaveFileAsync();
 
-                NewFile();
+                NewFile(false);
             }
 
             var fileDialog = new OpenFileDialog();
@@ -145,10 +148,6 @@ namespace ChartToJson.ViewModel
                 ChartSaveProxy saveFile = null;
                 try
                 {
-                    //var json = File.ReadAllText(fileDialog.FileName);
-
-                    //Application.Current.Dispatcher.Invoke(() => saveFile = JsonConvert.DeserializeObject<ChartSaveProxy>(json));
-                    //saveFile = await jsonMan.DeserializeJsonFileAsync<ChartSaveProxy>(fileDialog.FileName);
                     saveFile = await jsonMan.DeserializeJsonFileAsync<ChartSaveProxy>(fileDialog.FileName);
                 }
                 catch (Exception e)
@@ -216,6 +215,7 @@ namespace ChartToJson.ViewModel
             MessageBox.Show("File loaded", "Message");
             MainWindowTitle = $"{Properties.Settings.Default.MainWindowTitlePrefix} - {fileDialog.FileName}";
             UndoRedoSystem.UndoRedoCommandManager.Instance.ClearAll();
+            _LastSavePathThisSession = fileDialog.FileName;
         }
         private async Task SaveFileAsync()
         {

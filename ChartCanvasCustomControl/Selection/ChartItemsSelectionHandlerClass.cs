@@ -63,12 +63,6 @@ namespace ChartCanvasNamespace.Selection
             var hits = new HashSet<IVisualCanBeSelected>();
             VisualTreeHelper.HitTest(
                 Chart.ChartCanvas, null,
-                //x =>
-                //{
-                //    if (!typeof(IVisualCanBeSelected).IsAssignableFrom(x.GetType()))
-                //        return HitTestFilterBehavior.ContinueSkipSelfAndChildren;
-                //    return HitTestFilterBehavior.Continue;
-                //},
                 x =>
                 {
                     var element = x.VisualHit;

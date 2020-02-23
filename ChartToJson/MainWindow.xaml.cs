@@ -120,5 +120,10 @@ namespace ChartToJson
         {
             ChangeColorPopup.IsOpen = true;
         }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            int i = 0;
+        }
     }
 }

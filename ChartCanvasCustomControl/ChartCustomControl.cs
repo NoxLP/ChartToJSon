@@ -126,6 +126,7 @@ namespace ChartCanvasNamespace
 
             ChartCanvas = GetTemplateChild("PART_CCanvas") as Canvas;
             ChartCanvas.Loaded += ChartCanvas_Loaded;
+            ChartCanvas.PreviewKeyDown += ChartCanvas_PreviewKeyDown;
             _Origin = new Point(0.5, 0.5);
             ChartCanvas.RenderTransformOrigin = _Origin;
             ChartCanvas.SizeChanged += ChartCanvas_SizeChanged;
@@ -512,60 +513,6 @@ namespace ChartCanvasNamespace
         }
         #endregion
 
-        private Point GetCanvasCenter()
-        {
-            return new Point(
-                ChartCanvas.ActualWidth * 0.5d,
-                ChartCanvas.ActualHeight * 0.5d);
-        }
-        private void HandleKeyDown(Key key)
-        {
-            switch (key)
-            {
-                case Key.OemMinus:
-                case Key.Subtract:
-                    Zoom(GetCanvasCenter(), -0.1);
-                    break;
-                case Key.OemPlus:
-                case Key.Add:
-                    Zoom(GetCanvasCenter(), 0.1);
-                    break;
-                //case Key.Back:
-                //if (JumpBackToPrevZoom_CanExecuted())
-                //    JumpBackToPrevZoom();
-                //break;
-                case Key.Delete:
-                    var vm = ((IChartMainVM)DataContext);
-                    vm.RemoveSelectedEntities();
-                    break;
-                case Key.Escape:
-                    vm = ((IChartMainVM)DataContext);
-                    if (!string.IsNullOrEmpty(vm.VMCancellableActionsToken))
-                    {
-                        CancellableActionsHandlerClass.Instance.CancelAllOnGoingActions(x =>
-                            x.CancellableId.Contains(_CancellableActionsToken) || x.CancellableId.Contains(vm.VMCancellableActionsToken));
-                    }
-                    else
-                        CancellableActionsHandlerClass.Instance.CancelAllOnGoingActions(x => x.CancellableId.Contains(_CancellableActionsToken));
-                    Keyboard.ClearFocus();
-                    break;
-            }
-        }
-        private void MainWindow_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (!IsKeyboardFocused || !FocusManager.GetFocusedElement(Application.Current.MainWindow).Equals(this))
-            {
-                return;
-            }
-            HandleKeyDown(e.Key);
-            e.Handled = true;
-        }
-        protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
-        {
-            HandleKeyDown(e.Key);
-            base.OnPreviewKeyDown(e);
-        }
-
         #region add/remove items
         private void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -810,6 +757,64 @@ namespace ChartCanvasNamespace
             DependencyProperty.Register("CanvasHeight", typeof(double), typeof(ChartCustomControl), new PropertyMetadata(600d));
         #endregion
 
+        private Point GetCanvasCenter()
+        {
+            return new Point(
+                ChartCanvas.ActualWidth * 0.5d,
+                ChartCanvas.ActualHeight * 0.5d);
+        }
+        private void HandleKeyDown(Key key)
+        {
+            switch (key)
+            {
+                case Key.OemMinus:
+                case Key.Subtract:
+                    Zoom(GetCanvasCenter(), ChartCanvas.RenderTransform.Value.M11 - (_ZoomSpeed * 0.5));
+                    break;
+                case Key.OemPlus:
+                case Key.Add:
+                    Zoom(GetCanvasCenter(), ChartCanvas.RenderTransform.Value.M11 + (_ZoomSpeed * 0.5));
+                    break;
+                //case Key.Back:
+                //if (JumpBackToPrevZoom_CanExecuted())
+                //    JumpBackToPrevZoom();
+                //break;
+                case Key.Delete:
+                    var vm = ((IChartMainVM)DataContext);
+                    vm.RemoveSelectedEntities();
+                    break;
+                case Key.Escape:
+                    vm = ((IChartMainVM)DataContext);
+                    if (!string.IsNullOrEmpty(vm.VMCancellableActionsToken))
+                    {
+                        CancellableActionsHandlerClass.Instance.CancelAllOnGoingActions(x =>
+                            x.CancellableId.Contains(_CancellableActionsToken) || x.CancellableId.Contains(vm.VMCancellableActionsToken));
+                    }
+                    else
+                        CancellableActionsHandlerClass.Instance.CancelAllOnGoingActions(x => x.CancellableId.Contains(_CancellableActionsToken));
+                    Keyboard.ClearFocus();
+                    break;
+            }
+        }
+        protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
+        {
+            HandleKeyDown(e.Key);
+            base.OnPreviewKeyDown(e);
+        }
+        private void ChartCanvas_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            HandleKeyDown(e.Key);
+            e.Handled = true;
+        }
+        private void MainWindow_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            //if (!IsKeyboardFocused || !FocusManager.GetFocusedElement(Application.Current.MainWindow).Equals(this))
+            //{
+            //    return;
+            //}
+            HandleKeyDown(e.Key);
+            e.Handled = true;
+        }
         private void _CanvasResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             CanvasWidth += e.HorizontalChange;
@@ -1325,6 +1330,7 @@ namespace ChartCanvasNamespace
             else
             {
                 ChartItemsSelectionHandler.ClearItemsSelected();
+                Keyboard.ClearFocus();
             }
             ReleaseMouseCapture();
         }
@@ -1376,6 +1382,27 @@ namespace ChartCanvasNamespace
         }
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
         {
+            bool hitItem = false;
+            VisualTreeHelper.HitTest(
+                ChartCanvas, null,
+                x =>
+                {
+                    var element = x.VisualHit;
+                    while (element != null && !typeof(IVisualCanBeSelected).IsAssignableFrom(element.GetType()))
+                        element = VisualTreeHelper.GetParent(element);
+
+                    var hit = element as IVisualCanBeSelected;
+                    if (hit != null)
+                    {
+                        hitItem = true;
+                        return HitTestResultBehavior.Stop;
+                    }
+                    else
+                        return HitTestResultBehavior.Continue;
+                },
+                new PointHitTestParameters(e.GetPosition(ChartCanvas)));
+            if (hitItem)
+                return;
             var canvasPosition = e.GetPosition(ChartCanvas);
             var center = TranslatePoint(
                 new Point(ActualWidth * 0.5d, ActualHeight * 0.5d),

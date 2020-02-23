@@ -6,18 +6,36 @@
         xmlns:local="clr-namespace:ChartToJson.View.Windows"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d" WindowStyle="ToolWindow"
-        Title="Keys help" Height="450" Width="800">
+        Title="About and keys help" Height="700" Width="800">
     <Grid>
-        <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10">
-            <system:String xml:space="preserve">Flow chart items:
-    - Del or Backspace key: Remove selected chart items, entities or connections.
+        <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" TextWrapping="Wrap" FontSize="14">
+            <system:String xml:space="preserve">"Chart to Json" is a flow chart exportable to Json. It works but it's not finished.
+                
+I made this because I needed a tree like structure of objects, I like to plan things on flow charts and didn't want to plan it all and then write all the code down. So I made a flow chart that export not only to an image but to a Json file with a tree like structure.
+                
+Only entities will be exported to Json, not any visual (including text entities and texts boxes). Entities are added through MEF plugins following the "StoryChartEntitiesTemplatesPlugin" (the model subfolder are the entities itself) folder as example. Using MEF, UserControls can also be added so the user can input the data of the entities. Following MVVM pattern, the real entites wich will be exported to Json will be the model of that UserControls.
+
+Just for visual appealing, more border shapes of the entities can be added through MEF plugins too, following "ShapesTemplatesPlugin" folder as example.
+
+The idea is just throw the plugin dll file into a subfolder called "plugins" (case insensitive), and run.
+                
+Important keys and gestures:
+Flow chart items:
+    - Mouse over item while pressing "mayus" key: Show rotate and resize thumbs.
+    - Del or Backspace key: Remove selected chart items, including connections.
     - Mayus + Drag Left Button: Select area items
     - Left button on empty background: Unselect items
 
 Zoom and pan:
+    - Click on an empty space of an item: Select entity
     - Mouse wheel: Zoom
+    - "+" and "-" keys: Zoom (There is a bug here... don't work, working on it!)
     - Drag Middle button: Move canvas
     - Double left click: Center canvas on point
+                
+Read tooltips for the rest, all have a tooltip, and have fun.
+                
+Nox.
             </system:String>
         </TextBlock>
     </Grid>

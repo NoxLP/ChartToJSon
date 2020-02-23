@@ -69,7 +69,7 @@
             <Viewbox Name="ContentView" UseLayoutRounding="True" SnapsToDevicePixels="True" HorizontalAlignment="Center" VerticalAlignment="Center"
                      Panel.ZIndex="{Binding Source={x:Static props:Settings.Default},Path=ZIndex_EntityContentUserControl}">
                 <ContentControl x:Name="BorderContent" DataContext="{Binding .}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
-                            SizeChanged="BorderContent_SizeChanged"
+                            SizeChanged="BorderContent_SizeChanged" GotFocus="BorderContent_GotFocus"
                                 Panel.ZIndex="{Binding Source={x:Static props:Settings.Default},Path=ZIndex_EntityContentUserControl}"
                             Content="{Binding ElementName=Root,Path=DataContext, Mode=TwoWay}"
                             ContentTemplateSelector="{Binding Source={x:Static chartRoot:ChartCustomControl.Instance}, Path=EntityContentTemplateSelector, Mode=OneWay}"/>
