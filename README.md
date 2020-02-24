@@ -13,7 +13,11 @@ The idea is just throw the plugin dll file into a subfolder called "plugins" (ca
 
 You'll need these to compile it:
 https://github.com/NoxLP/UndoRedoSystem
+
 https://github.com/NoxLP/WPFHelpers
+
 https://github.com/NoxLP/NET471WPFVisualTreeHelperExtensions
+
 https://github.com/NoxLP/Math471
+
 https://github.com/NoxLP/JsonManagerLibrary
