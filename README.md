@@ -11,7 +11,8 @@ Just for visual appealing, more border shapes of the entities can be added throu
 
 The idea is just throw the plugin dll file into a subfolder called "plugins" (case insensitive), and run.
 
-You'll need these to compile it:
+You'll need these to compile it (all marked as release v1.0):
+
 https://github.com/NoxLP/UndoRedoSystem
 
 https://github.com/NoxLP/WPFHelpers
@@ -21,3 +22,8 @@ https://github.com/NoxLP/NET471WPFVisualTreeHelperExtensions
 https://github.com/NoxLP/Math471
 
 https://github.com/NoxLP/JsonManagerLibrary
+
+
+Also there's an msi file here:  
+
+https://drive.google.com/file/d/1GFfFqFBbsvLh4aTyWj4x7ClN6jyBIdf7/view?usp=sharing
